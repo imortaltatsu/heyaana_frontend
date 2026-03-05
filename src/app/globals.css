@@ -15,6 +15,7 @@
   --color-surface-hover: var(--surface-hover);
   --color-border: var(--border-color);
   --color-muted: var(--muted);
+  --color-red-primary: #FF4D4D;
   --color-navy-hero: #0B1026;
   --color-navy-mid: #111833;
   --font-sans: var(--font-geist-sans);

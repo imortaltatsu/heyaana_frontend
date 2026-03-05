@@ -18,7 +18,7 @@ export function StatsOverview() {
       {stats.map((stat) => (
         <div
           key={stat.label}
-          className="p-4 rounded-xl border border-border bg-surface/50 hover:border-red-primary/20 transition-all shine-effect"
+          className="p-4 rounded-xl border border-border bg-surface/50 hover:border-primary/30 transition-all shine-effect"
         >
           <div className="flex items-center justify-between mb-3">
             <span className="text-[10px] font-mono text-muted uppercase tracking-wider">{stat.label}</span>

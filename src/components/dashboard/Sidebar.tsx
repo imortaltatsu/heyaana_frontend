@@ -15,6 +15,8 @@ import {
   MessageCircle,
   Home,
 } from "lucide-react";
+import React from "react";
+import { usePrivy } from "@privy-io/react-auth";
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Overview" },
@@ -32,6 +34,9 @@ const bottomItems = [
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const { login, logout, authenticated, user } = usePrivy();
+
+  const address = user?.wallet?.address;
 
   return (
     <aside className="fixed left-0 top-0 bottom-0 w-64 border-r border-border bg-background z-40 flex flex-col">
@@ -62,11 +67,10 @@ export function DashboardSidebar() {
             <Link
               key={item.label}
               href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all ${
-                isActive
-                  ? "bg-red-primary/10 text-red-primary border border-red-primary/20"
-                  : "text-muted hover:text-foreground hover:bg-surface"
-              }`}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all ${isActive
+                ? "bg-red-primary/10 text-red-primary border border-red-primary/20"
+                : "text-muted hover:text-foreground hover:bg-surface"
+                }`}
             >
               <item.icon className="w-4 h-4" />
               {item.label}
@@ -101,18 +105,42 @@ export function DashboardSidebar() {
 
       {/* Bottom */}
       <div className="p-4 border-t border-border">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-red-primary/10 text-red-primary flex items-center justify-center text-xs font-bold font-mono">
-              SS
+        {authenticated ? (
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-green-500/10 text-green-500 flex items-center justify-center text-[10px] font-bold font-mono">
+                  {address ? address.slice(2, 4).toUpperCase() : "ID"}
+                </div>
+                <div>
+                  <div className="text-sm font-medium font-mono">
+                    {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : user?.id.slice(0, 10)}
+                  </div>
+                  <div className="text-[10px] text-muted">Connected via Privy</div>
+                </div>
+              </div>
+              <ThemeToggle />
             </div>
-            <div>
-              <div className="text-sm font-medium">Sam</div>
-              <div className="text-[10px] text-muted">Connected</div>
+            <button
+              onClick={() => logout()}
+              className="w-full py-2 rounded-lg border border-border text-[10px] font-mono text-muted hover:text-red-primary hover:border-red-primary/30 transition-all uppercase tracking-widest"
+            >
+              Disconnect
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={() => login()}
+              className="w-full py-2.5 rounded-lg bg-red-primary text-white text-xs font-bold hover:bg-red-primary/90 transition-all shadow-lg shadow-red-primary/20"
+            >
+              Sign In
+            </button>
+            <div className="flex items-center justify-center">
+              <ThemeToggle />
             </div>
           </div>
-          <ThemeToggle />
-        </div>
+        )}
       </div>
     </aside>
   );

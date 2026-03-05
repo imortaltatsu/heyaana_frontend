@@ -16,7 +16,7 @@ import {
     AreaChart,
     Area
 } from "recharts";
-import { Loader2 } from "lucide-react";
+import { AlertCircle, Activity, Loader2 } from "lucide-react";
 
 interface AnalysisCardProps {
     endpointName: string;
@@ -24,7 +24,7 @@ interface AnalysisCardProps {
 }
 
 // Generate colors if none provided
-const DEFAULT_COLORS = ["#DC2626", "#3B82F6", "#F59E0B", "#10B981", "#8B5CF6"];
+const DEFAULT_COLORS = ["#2E5CFF", "#FFAA03", "#6B8FFF", "#FFD066", "#1A3FCC"];
 
 export function AnalysisCard({ endpointName, className = "" }: AnalysisCardProps) {
     const { data, error, isLoading } = useSWR<AnalysisResponse>(
@@ -84,15 +84,15 @@ export function AnalysisCard({ endpointName, className = "" }: AnalysisCardProps
             case "line":
                 return (
                     <LineChart data={chart.data} margin={{ top: 5, right: 5, left: -20, bottom: 20 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#1e2a4a" />
                         <XAxis
                             dataKey={chart.xKey}
-                            tick={{ fontSize: 11, fill: "var(--muted)" }}
-                            axisLine={{ stroke: "var(--border-color)" }}
+                            tick={{ fontSize: 10, fill: "#8B95B5" }}
+                            axisLine={{ stroke: "#1e2a4a" }}
                         />
                         <YAxis
-                            tick={{ fontSize: 11, fill: "var(--muted)" }}
-                            axisLine={{ stroke: "var(--border-color)" }}
+                            tick={{ fontSize: 10, fill: "#8B95B5" }}
+                            axisLine={{ stroke: "#1e2a4a" }}
                             tickFormatter={yFormatter}
                         />
                         <Tooltip
@@ -127,15 +127,15 @@ export function AnalysisCard({ endpointName, className = "" }: AnalysisCardProps
             case "bar":
                 return (
                     <BarChart data={chart.data} margin={{ top: 5, right: 5, left: -20, bottom: 20 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#1e2a4a" />
                         <XAxis
                             dataKey={chart.xKey}
-                            tick={{ fontSize: 11, fill: "var(--muted)" }}
-                            axisLine={{ stroke: "var(--border-color)" }}
+                            tick={{ fontSize: 10, fill: "#8B95B5" }}
+                            axisLine={{ stroke: "#1e2a4a" }}
                         />
                         <YAxis
-                            tick={{ fontSize: 11, fill: "var(--muted)" }}
-                            axisLine={{ stroke: "var(--border-color)" }}
+                            tick={{ fontSize: 10, fill: "#8B95B5" }}
+                            axisLine={{ stroke: "#1e2a4a" }}
                             tickFormatter={yFormatter}
                         />
                         <Tooltip
@@ -166,15 +166,15 @@ export function AnalysisCard({ endpointName, className = "" }: AnalysisCardProps
             case "area":
                 return (
                     <AreaChart data={chart.data} margin={{ top: 5, right: 5, left: -20, bottom: 20 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#1e2a4a" />
                         <XAxis
                             dataKey={chart.xKey}
-                            tick={{ fontSize: 11, fill: "var(--muted)" }}
-                            axisLine={{ stroke: "var(--border-color)" }}
+                            tick={{ fontSize: 10, fill: "#8B95B5" }}
+                            axisLine={{ stroke: "#1e2a4a" }}
                         />
                         <YAxis
-                            tick={{ fontSize: 11, fill: "var(--muted)" }}
-                            axisLine={{ stroke: "var(--border-color)" }}
+                            tick={{ fontSize: 10, fill: "#8B95B5" }}
+                            axisLine={{ stroke: "#1e2a4a" }}
                             tickFormatter={yFormatter}
                         />
                         <Tooltip
@@ -208,15 +208,15 @@ export function AnalysisCard({ endpointName, className = "" }: AnalysisCardProps
             case "stacked-area-100":
                 return (
                     <AreaChart data={chart.data} margin={{ top: 5, right: 5, left: -20, bottom: 20 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#333" />
                         <XAxis
                             dataKey={chart.xKey}
-                            tick={{ fontSize: 11, fill: "var(--muted)" }}
-                            axisLine={{ stroke: "var(--border-color)" }}
+                            tick={{ fontSize: 10, fill: "#FFB000", fontFamily: "monospace" }}
+                            axisLine={{ stroke: "#444" }}
                         />
                         <YAxis
-                            tick={{ fontSize: 11, fill: "var(--muted)" }}
-                            axisLine={{ stroke: "var(--border-color)" }}
+                            tick={{ fontSize: 10, fill: "#FFB000", fontFamily: "monospace" }}
+                            axisLine={{ stroke: "#444" }}
                             tickFormatter={yFormatter}
                         />
                         <Tooltip
@@ -251,15 +251,15 @@ export function AnalysisCard({ endpointName, className = "" }: AnalysisCardProps
             case "stacked-bar-100":
                 return (
                     <BarChart data={chart.data} margin={{ top: 5, right: 5, left: -20, bottom: 20 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#333" />
                         <XAxis
                             dataKey={chart.xKey}
-                            tick={{ fontSize: 11, fill: "var(--muted)" }}
-                            axisLine={{ stroke: "var(--border-color)" }}
+                            tick={{ fontSize: 10, fill: "#FFB000", fontFamily: "monospace" }}
+                            axisLine={{ stroke: "#444" }}
                         />
                         <YAxis
-                            tick={{ fontSize: 11, fill: "var(--muted)" }}
-                            axisLine={{ stroke: "var(--border-color)" }}
+                            tick={{ fontSize: 10, fill: "#FFB000", fontFamily: "monospace" }}
+                            axisLine={{ stroke: "#444" }}
                             tickFormatter={yFormatter}
                         />
                         <Tooltip
@@ -297,26 +297,51 @@ export function AnalysisCard({ endpointName, className = "" }: AnalysisCardProps
     };
 
     return (
-        <div className={`p-6 rounded-xl border border-border bg-surface/50 flex flex-col h-[400px] ${className}`}>
-            <div className="mb-6 flex-shrink-0">
-                <h3 className="text-lg font-semibold">{chart.title || name}</h3>
-                <p className="text-xs text-muted mt-1">{description}</p>
+        <div className={`bg-navy-mid/50 backdrop-blur-sm border border-border/50 rounded-xl overflow-hidden flex flex-col h-[380px] transition-all duration-300 hover:border-primary/30 group ${className}`}>
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border/20 flex-shrink-0">
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                        <Activity size={18} />
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-bold text-foreground leading-none">
+                            {chart?.title || endpointName.replace(/_/g, " ")}
+                        </h3>
+                        <p className="text-[10px] text-muted font-medium mt-1 uppercase tracking-tight">
+                            {description?.slice(0, 50)}...
+                        </p>
+                    </div>
+                </div>
+                <div className="px-2 py-0.5 rounded bg-surface border border-border/50 text-[9px] font-bold text-muted uppercase tracking-tighter">
+                    TX_{endpointName.slice(0, 3).toUpperCase()}
+                </div>
             </div>
 
-            <div className="flex-1 min-h-0 relative">
-                <ResponsiveContainer width="100%" height="100%">
-                    {renderChart()}
-                </ResponsiveContainer>
-                {chart.xLabel && (
-                    <div className="absolute bottom-[-16px] left-0 w-full text-center text-[10px] text-muted font-mono">
-                        {chart.xLabel}
+            <div className="flex-1 min-h-0 p-4 relative">
+                {isLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-navy-hero/30 z-10 backdrop-blur-[2px]">
+                        <div className="flex flex-col items-center gap-2">
+                            <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                            <span className="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">Stream_Sync...</span>
+                        </div>
                     </div>
                 )}
-                {chart.yLabel && (
-                    <div className="absolute top-1/2 left-[-20px] -translate-y-1/2 -rotate-90 origin-center text-[10px] text-muted font-mono whitespace-nowrap">
-                        {chart.yLabel}
-                    </div>
+
+                {data && (
+                    <ResponsiveContainer width="100%" height="100%">
+                        {renderChart()}
+                    </ResponsiveContainer>
                 )}
+            </div>
+
+            <div className="px-4 py-2 bg-navy-hero/30 border-t border-border/10 flex items-center justify-between text-[10px] font-medium text-muted/60 flex-shrink-0">
+                <div className="flex gap-4">
+                    <span className="flex items-center gap-1.5"><div className="w-1 h-1 rounded-full bg-green-500" /> STATUS: ACTIVE</span>
+                    <span>MTX: {endpointName.toUpperCase()}</span>
+                </div>
+                <div className="group-hover:text-primary transition-colors cursor-pointer flex items-center gap-1 font-bold italic">
+                    FULL_REPORT <Activity size={10} />
+                </div>
             </div>
         </div>
     );
