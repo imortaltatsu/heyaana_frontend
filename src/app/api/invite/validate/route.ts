@@ -10,22 +10,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ valid: false, error: "Invalid invite code" }, { status: 400 });
     }
 
-    const rows = (await sql`
-      SELECT id, used_at FROM invite_codes
-      WHERE code = ${code}
-      LIMIT 1
-    `) as { id: string; used_at: string | null }[];
+    // Atomically burn the code on validate — one use only, no second chances
+    const burned = (await sql`
+      UPDATE invite_codes
+      SET used_at = NOW(), used_by = 'PENDING'
+      WHERE code = ${code} AND used_at IS NULL
+      RETURNING id
+    `) as { id: string }[];
 
-    if (rows.length === 0) {
+    if (burned.length > 0) {
+      return NextResponse.json({ valid: true });
+    }
+
+    const check = (await sql`
+      SELECT used_at FROM invite_codes WHERE code = ${code} LIMIT 1
+    `) as { used_at: string | null }[];
+
+    if (check.length === 0) {
       return NextResponse.json({ valid: false, error: "Invite code not found" }, { status: 404 });
     }
 
-    const row = rows[0];
-    if (row.used_at) {
-      return NextResponse.json({ valid: false, error: "Invite code already used" }, { status: 400 });
-    }
-
-    return NextResponse.json({ valid: true });
+    return NextResponse.json({ valid: false, error: "Invite code already used" }, { status: 400 });
   } catch (err) {
     if (err instanceof Error && err.message.includes("DATABASE_URL")) {
       return NextResponse.json({ valid: false, error: "Database not configured" }, { status: 503 });

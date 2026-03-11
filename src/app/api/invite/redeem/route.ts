@@ -37,19 +37,19 @@ export async function POST(req: NextRequest) {
 
     const rows = (await sql`
       UPDATE invite_codes
-      SET used_at = NOW(), used_by = ${userId}
-      WHERE code = ${code} AND used_at IS NULL
+      SET used_by = ${userId}
+      WHERE code = ${code} AND used_by = 'PENDING'
       RETURNING id
     `) as unknown[];
 
     if (rows.length === 0) {
       const check = (await sql`
-        SELECT used_at, used_by FROM invite_codes WHERE code = ${code} LIMIT 1
-      `) as unknown[];
+        SELECT used_by FROM invite_codes WHERE code = ${code} LIMIT 1
+      `) as { used_by: string | null }[];
       if (check.length === 0) {
         return NextResponse.json({ success: false, error: "Invite code not found" }, { status: 404 });
       }
-      return NextResponse.json({ success: false, error: "Invite code already used" }, { status: 400 });
+      return NextResponse.json({ success: false, error: "Invite code already used or expired" }, { status: 400 });
     }
 
     return NextResponse.json({ success: true });
