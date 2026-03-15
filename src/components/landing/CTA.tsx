@@ -72,7 +72,7 @@ export function CTA() {
               </svg>
             </a>
             <a
-              href="https://t.me/heyanna_ai_bot"
+              href="https://t.me/heyannadev_bot"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-sm bg-[#26A5E4]/15 border border-[#26A5E4]/30 text-[#26A5E4] font-medium hover:bg-[#26A5E4]/25 transition-all text-sm uppercase tracking-widest"

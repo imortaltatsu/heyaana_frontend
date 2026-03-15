@@ -6,7 +6,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MobileTradingModal } from "@/components/shared/MobileTradingModal";
 
-const TG_BOT_URL = "https://t.me/heyanna_ai_bot";
+const TG_BOT_URL = "https://t.me/heyannadev_bot";
 
 export function Hero() {
   const router = useRouter();

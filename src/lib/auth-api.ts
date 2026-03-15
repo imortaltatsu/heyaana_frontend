@@ -6,9 +6,9 @@
  */
 
 /** Analysis, dashboard, and market data API */
-export const API1_BASE_URL = "https://api.heyanna.trade";
+export const API1_BASE_URL = "https://staging.heyanna.trade";
 /** Trading, auth, copy-trading, and portfolio API */
-export const API2_BASE_URL = "https://api2.heyanna.trade";
+export const API2_BASE_URL = "https://staging.heyanna.trade";
 
 // ─── Token storage key ─────────────────────────────────────
 export const TOKEN_STORAGE_KEY = "heyanna_token";

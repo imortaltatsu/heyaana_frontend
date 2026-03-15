@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSql } from "@/lib/db";
 
-const API2_BASE_URL = "https://api2.heyanna.trade";
+const API2_BASE_URL = "https://staging.heyanna.trade";
 
 async function getAuthenticatedUser(authHeader: string | null): Promise<{ telegram_id: number } | null> {
   if (!authHeader?.startsWith("Bearer ")) return null;

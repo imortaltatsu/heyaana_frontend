@@ -120,7 +120,7 @@ export function Navbar() {
             <a href="https://x.com/tryheyanna" target="_blank" rel="noopener noreferrer" className="block text-sm text-white/60 hover:text-white px-2 py-1" onClick={() => setMobileOpen(false)}>Twitter / X</a>
             <div className="flex flex-col gap-2 pt-2">
               <a
-                href="https://t.me/heyanna_ai_bot"
+                href="https://t.me/heyannadev_bot"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-1.5 text-center text-sm px-4 py-2 rounded-full border border-[#26A5E4]/30 bg-[#26A5E4]/10 text-[#26A5E4]"

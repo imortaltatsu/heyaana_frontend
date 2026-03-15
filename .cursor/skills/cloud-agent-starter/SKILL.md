@@ -9,7 +9,7 @@ Use this skill when you need to quickly run, debug, and test this repo in Cursor
 2. Create local env:
    - `cp .env.local.example .env.local` (if an example exists)
    - If no example exists, create `.env.local` manually with:
-     - `NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=heyanna_ai_bot`
+     - `NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=heyannadev_bot`
      - `DATABASE_URL=...` (required for invite-code routes)
      - `DEV_API_KEY=...` (optional, enables secure dev manual login proxy header)
      - `INVITE_ADMIN_KEY=...` (only needed for invite code generation endpoint)
@@ -20,7 +20,8 @@ Use this skill when you need to quickly run, debug, and test this repo in Cursor
 
 Notes:
 - App is a Next.js frontend with Route Handlers under `src/app/api/*`.
-- Most trading/profile data is fetched from remote APIs (`api.heyanna.trade`, `api2.heyanna.trade`).
+- Most trading/profile data is fetched from remote APIs (`staging.heyanna.trade`).
+- Frontend is deployed at `heyaana-frontend-rosy.vercel.app`.
 - Invite validation/redeem depends on Postgres via `DATABASE_URL`.
 
 ## 2) Auth + onboarding area (`/onboarding`)

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
-const TG_BOT_URL = "https://t.me/heyanna_ai_bot";
+const TG_BOT_URL = "https://t.me/heyannadev_bot";
 
 interface MobileTradingModalProps {
   isOpen: boolean;

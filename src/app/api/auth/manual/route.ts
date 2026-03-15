@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const API2_BASE_URL = "https://api2.heyanna.trade";
+const API2_BASE_URL = "https://staging.heyanna.trade";
 
 /**
  * Proxy for dev/manual login — calls api2 server-to-server so
