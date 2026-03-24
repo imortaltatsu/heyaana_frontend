@@ -4,7 +4,7 @@ import { useState } from "react";
 import useSWR from "swr";
 import { DashboardChrome } from "@/components/dashboard/DashboardChrome";
 import { useAuth } from "@/lib/useAuth";
-import { Gift, Trophy, Star, Users, Zap, ArrowUpRight, Copy, Share2, Lock, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { Gift, Trophy, Star, Users, Copy, Share2, Lock, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 
 const TOKEN_KEY = "heyanna_token";
 
@@ -24,12 +24,6 @@ const publicFetcher = (url: string) =>
     return r.json();
   });
 
-const xpActions = [
-  { icon: Users, label: "Refer a friend", xp: "+500 XP", description: "Earn XP when your referral signs up" },
-  { icon: Zap, label: "Referral places first trade", xp: "+1,000 XP", description: "Bonus when your referral starts trading" },
-  { icon: ArrowUpRight, label: "Referral reaches $100 volume", xp: "+2,500 XP", description: "Milestone bonus for active referrals" },
-  { icon: Star, label: "Top 10 referrer (monthly)", xp: "+5,000 XP", description: "Monthly bonus for top referrers" },
-];
 
 const mockLeaderboard = [
   { rank: 1, name: "trader_alpha", xp: "12,450" },
@@ -240,35 +234,8 @@ export default function ReferralPage() {
             ))}
           </div>
 
-          {/* Two Column: XP Actions + Leaderboard */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-
-            {/* How to Earn XP */}
-            <div className="dashboard-card p-4 md:p-5">
-              <div className="flex items-center gap-2 mb-4">
-                <Zap className="w-4 h-4 text-blue-primary" />
-                <h3 className="text-sm font-semibold">How to Earn XP</h3>
-              </div>
-              <div className="space-y-2.5">
-                {xpActions.map((action) => (
-                  <div
-                    key={action.label}
-                    className="rounded-lg inner-card p-3 flex items-center gap-3 opacity-50"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-white/[0.04] border border-border/30 flex items-center justify-center shrink-0">
-                      <action.icon className="w-3.5 h-3.5 text-muted" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium">{action.label}</p>
-                      <p className="text-[10px] text-muted mt-0.5">{action.description}</p>
-                    </div>
-                    <span className="text-[11px] font-mono text-blue-primary/60 whitespace-nowrap">{action.xp}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Referral Leaderboard */}
+          {/* Referral Leaderboard */}
+          <div>
             <div className="dashboard-card p-4 md:p-5">
               <div className="flex items-center gap-2 mb-4">
                 <Trophy className="w-4 h-4 text-yellow-500" />
