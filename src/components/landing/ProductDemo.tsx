@@ -29,7 +29,7 @@ export function ProductDemo() {
     const panelY = useTransform(scrollYProgress, [0, 1], [30, -30]);
 
     return (
-        <section ref={sectionRef} className="py-24 relative overflow-hidden">
+        <section ref={sectionRef} id="product" className="py-24 relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#060B1A] to-transparent pointer-events-none z-[1]" />
             <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#060B1A] to-transparent pointer-events-none z-[1]" />
             <motion.div style={{ y: gridY }} className="absolute inset-0 grid-bg opacity-20" />

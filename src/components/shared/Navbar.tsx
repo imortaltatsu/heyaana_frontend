@@ -59,13 +59,19 @@ export function Navbar() {
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => (
-              <Link
+              <button
                 key={link.label}
-                href={link.href}
+                onClick={() => {
+                  const id = link.href.replace("/#", "");
+                  const el = document.getElementById(id);
+                  if (el) {
+                    el.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }
+                }}
                 className="text-sm text-white/50 hover:text-white px-4 py-1.5 rounded-full hover:bg-white/5 transition-all"
               >
                 {link.label}
-              </Link>
+              </button>
             ))}
             <a
               href="https://x.com/tryheyanna"
@@ -108,14 +114,20 @@ export function Navbar() {
         {mobileOpen && (
           <div className="md:hidden border-t border-white/5 py-4 space-y-3">
             {navLinks.map((link) => (
-              <Link
+              <button
                 key={link.label}
-                href={link.href}
-                className="block text-sm text-white/60 hover:text-white px-2 py-1"
-                onClick={() => setMobileOpen(false)}
+                onClick={() => {
+                  setMobileOpen(false);
+                  const id = link.href.replace("/#", "");
+                  const el = document.getElementById(id);
+                  if (el) {
+                    el.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }
+                }}
+                className="block text-sm text-white/60 hover:text-white px-2 py-1 text-left"
               >
                 {link.label}
-              </Link>
+              </button>
             ))}
             <a href="https://x.com/tryheyanna" target="_blank" rel="noopener noreferrer" className="block text-sm text-white/60 hover:text-white px-2 py-1" onClick={() => setMobileOpen(false)}>Twitter / X</a>
             <div className="flex flex-col gap-2 pt-2">
