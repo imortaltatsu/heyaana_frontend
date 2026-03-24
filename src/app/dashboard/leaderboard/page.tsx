@@ -1,7 +1,29 @@
 "use client";
 
+import useSWR from "swr";
 import { DashboardChrome } from "@/components/dashboard/DashboardChrome";
-import { Trophy, TrendingUp, Flame, Crown, Star, Medal } from "lucide-react";
+import { useAuth } from "@/lib/useAuth";
+import { Trophy, TrendingUp, Flame, Crown, Star, Medal, Loader2 } from "lucide-react";
+
+const TOKEN_KEY = "heyanna_token";
+
+const authFetcher = (url: string) =>
+  fetch(url, {
+    headers: {
+      Authorization: `Bearer ${typeof window !== "undefined" ? localStorage.getItem(TOKEN_KEY) : ""}`,
+    },
+  }).then((r) => {
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
+  });
+
+const publicFetcher = (url: string) =>
+  fetch(url).then((r) => {
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
+  });
+
+type LeaderboardEntry = { rank: number; userId: string; xp: number; referralCount: number };
 
 const placeholderRows = [
   { rank: 1, name: "crypto_whale_9f", xp: "48,200", refs: "34", vol: "$1.2M" },
@@ -16,13 +38,31 @@ const placeholderRows = [
   { rank: 10, name: "sharp_bettor_v", xp: "7,100", refs: "5", vol: "$140K" },
 ];
 
-const podium = [
+const podiumConfig = [
   { place: "2nd", rank: 2, icon: Medal, color: "text-gray-300", bg: "from-gray-400/10 to-gray-400/[0.02]", border: "border-gray-400/20" },
   { place: "1st", rank: 1, icon: Crown, color: "text-yellow-400", bg: "from-yellow-500/10 to-yellow-500/[0.02]", border: "border-yellow-500/25" },
   { place: "3rd", rank: 3, icon: Medal, color: "text-orange-400", bg: "from-orange-500/10 to-orange-500/[0.02]", border: "border-orange-500/20" },
 ];
 
 export default function LeaderboardPage() {
+  const { hasSessionToken } = useAuth();
+
+  const { data: lbData, isLoading: lbLoading } = useSWR(
+    "/api/referral/leaderboard",
+    publicFetcher,
+    { revalidateOnFocus: false, shouldRetryOnError: false }
+  );
+
+  const { data: statsData, isLoading: statsLoading } = useSWR(
+    hasSessionToken ? "/api/referral/stats" : null,
+    authFetcher,
+    { revalidateOnFocus: false, shouldRetryOnError: false }
+  );
+
+  const leaderboard = lbData?.leaderboard as LeaderboardEntry[] | undefined;
+  const hasLeaderboard = Array.isArray(leaderboard) && leaderboard.length > 0;
+  const hasStats = !!statsData && typeof statsData.xp === "number";
+
   return (
     <DashboardChrome title="Leaderboard">
       <div className="h-full overflow-y-auto">
@@ -37,9 +77,12 @@ export default function LeaderboardPage() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-3">
                   <h2 className="text-base font-bold">Global Leaderboard</h2>
-                  <span className="text-[9px] font-mono px-2.5 py-1 rounded-full border border-blue-primary/30 text-blue-primary uppercase tracking-widest shrink-0">
-                    Coming Soon
-                  </span>
+                  {!hasLeaderboard && !lbLoading && (
+                    <span className="text-[9px] font-mono px-2.5 py-1 rounded-full border border-blue-primary/30 text-blue-primary uppercase tracking-widest shrink-0">
+                      Coming Soon
+                    </span>
+                  )}
+                  {lbLoading && <Loader2 className="w-4 h-4 text-muted/40 animate-spin shrink-0" />}
                 </div>
                 <p className="text-xs text-muted mt-1.5 leading-relaxed max-w-md">
                   Compete with traders worldwide. Earn XP through referrals, trading volume, and streak bonuses.
@@ -50,18 +93,24 @@ export default function LeaderboardPage() {
 
           {/* Top 3 Podium */}
           <div className="grid grid-cols-3 gap-3 items-end">
-            {podium.map((p) => {
-              const row = placeholderRows[p.rank - 1];
+            {podiumConfig.map((p) => {
+              const lbEntry = hasLeaderboard ? leaderboard!.find((e) => e.rank === p.rank) ?? leaderboard![p.rank - 1] : null;
+              const placeholderRow = placeholderRows[p.rank - 1];
               const isFirst = p.rank === 1;
+              const isReal = !!lbEntry;
               return (
                 <div
                   key={p.place}
-                  className={`rounded-xl border ${p.border} bg-gradient-to-b ${p.bg} flex flex-col items-center justify-center text-center opacity-45 ${isFirst ? "py-8 md:py-10" : "py-6 md:py-7"}`}
+                  className={`rounded-xl border ${p.border} bg-gradient-to-b ${p.bg} flex flex-col items-center justify-center text-center ${!isReal ? "opacity-45" : ""} ${isFirst ? "py-8 md:py-10" : "py-6 md:py-7"}`}
                 >
                   <p.icon className={`w-6 h-6 ${p.color} ${isFirst ? "w-8 h-8" : ""}`} />
                   <p className={`text-xs font-mono ${p.color} mt-2`}>{p.place}</p>
-                  <p className="text-xs font-mono text-muted mt-1.5 blur-[3px] select-none">{row.name}</p>
-                  <p className={`text-sm font-bold font-mono ${p.color} mt-1 blur-[3px] select-none`}>{row.xp} XP</p>
+                  <p className={`text-xs font-mono text-muted mt-1.5 ${!isReal ? "blur-[3px] select-none" : ""}`}>
+                    {isReal ? `User #${lbEntry!.userId}` : placeholderRow.name}
+                  </p>
+                  <p className={`text-sm font-bold font-mono ${p.color} mt-1 ${!isReal ? "blur-[3px] select-none" : ""}`}>
+                    {isReal ? `${lbEntry!.xp.toLocaleString()} XP` : `${placeholderRow.xp} XP`}
+                  </p>
                 </div>
               );
             })}
@@ -93,45 +142,69 @@ export default function LeaderboardPage() {
           {/* Leaderboard Table */}
           <div className="dashboard-card overflow-hidden">
             {/* Header */}
-            <div className="grid grid-cols-[40px_1fr_70px_60px_80px] px-4 py-2.5 border-b border-border/40 text-[9px] font-mono text-muted uppercase tracking-wider">
+            <div className="grid grid-cols-[40px_1fr_70px_60px] px-4 py-2.5 border-b border-border/40 text-[9px] font-mono text-muted uppercase tracking-wider">
               <span>#</span>
               <span>Trader</span>
               <span className="text-right">XP</span>
               <span className="text-right">Refs</span>
-              <span className="text-right">Volume</span>
             </div>
 
             {/* Rows */}
-            {placeholderRows.map((row) => (
-              <div
-                key={row.rank}
-                className={`grid grid-cols-[40px_1fr_70px_60px_80px] px-4 py-2.5 border-b border-border/10 last:border-0 items-center ${row.rank <= 3 ? "opacity-45" : "opacity-35"}`}
-              >
-                <span className="text-xs font-semibold">
-                  {row.rank <= 3
-                    ? ["🥇", "🥈", "🥉"][row.rank - 1]
-                    : <span className="text-muted">{row.rank}</span>}
-                </span>
-                <span className="text-xs font-mono text-muted blur-[3px] select-none">{row.name}</span>
-                <span className="text-xs font-mono text-muted text-right blur-[3px] select-none">{row.xp}</span>
-                <span className="text-xs font-mono text-muted text-right blur-[3px] select-none">{row.refs}</span>
-                <span className="text-xs font-mono text-muted text-right blur-[3px] select-none">{row.vol}</span>
-              </div>
-            ))}
+            {hasLeaderboard
+              ? leaderboard!.map((row, i) => (
+                  <div
+                    key={row.rank ?? i}
+                    className="grid grid-cols-[40px_1fr_70px_60px] px-4 py-2.5 border-b border-border/10 last:border-0 items-center"
+                  >
+                    <span className="text-xs font-semibold">
+                      {(row.rank ?? i + 1) <= 3
+                        ? ["\ud83e\udd47", "\ud83e\udd48", "\ud83e\udd49"][(row.rank ?? i + 1) - 1]
+                        : <span className="text-muted">{row.rank ?? i + 1}</span>}
+                    </span>
+                    <span className="text-xs font-mono text-muted">User #{row.userId}</span>
+                    <span className="text-xs font-mono text-muted text-right">{row.xp.toLocaleString()}</span>
+                    <span className="text-xs font-mono text-muted text-right">{row.referralCount}</span>
+                  </div>
+                ))
+              : placeholderRows.map((row) => (
+                  <div
+                    key={row.rank}
+                    className={`grid grid-cols-[40px_1fr_70px_60px] px-4 py-2.5 border-b border-border/10 last:border-0 items-center ${row.rank <= 3 ? "opacity-45" : "opacity-35"}`}
+                  >
+                    <span className="text-xs font-semibold">
+                      {row.rank <= 3
+                        ? ["\ud83e\udd47", "\ud83e\udd48", "\ud83e\udd49"][row.rank - 1]
+                        : <span className="text-muted">{row.rank}</span>}
+                    </span>
+                    <span className="text-xs font-mono text-muted blur-[3px] select-none">{row.name}</span>
+                    <span className="text-xs font-mono text-muted text-right blur-[3px] select-none">{row.xp}</span>
+                    <span className="text-xs font-mono text-muted text-right blur-[3px] select-none">{row.refs}</span>
+                  </div>
+                ))}
           </div>
 
           {/* Your Position */}
-          <div className="dashboard-card p-5 flex items-center justify-between opacity-50">
+          <div className={`dashboard-card p-5 flex items-center justify-between ${!hasStats ? "opacity-50" : ""}`}>
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-lg bg-white/[0.04] border border-border/30 flex items-center justify-center">
-                <Star className="w-4 h-4 text-muted" />
+                <Star className={`w-4 h-4 ${hasStats ? "text-blue-primary" : "text-muted"}`} />
               </div>
               <div>
                 <p className="text-xs font-semibold">Your Position</p>
-                <p className="text-[10px] text-muted mt-0.5">Start referring friends to climb the leaderboard</p>
+                <p className="text-[10px] text-muted mt-0.5">
+                  {hasStats
+                    ? `${statsData.xp.toLocaleString()} XP \u00b7 ${statsData.referralCount} referrals`
+                    : "Start referring friends to climb the leaderboard"}
+                </p>
               </div>
             </div>
-            <p className="text-xl font-bold font-mono text-foreground/30">—</p>
+            {statsLoading && hasSessionToken ? (
+              <Loader2 className="w-5 h-5 text-muted/40 animate-spin" />
+            ) : (
+              <p className={`text-xl font-bold font-mono ${hasStats ? "text-foreground" : "text-foreground/30"}`}>
+                {hasStats ? `#${statsData.rank}` : "\u2014"}
+              </p>
+            )}
           </div>
 
         </div>
