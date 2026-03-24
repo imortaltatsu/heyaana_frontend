@@ -229,16 +229,17 @@ function KalshiEventDetailContent() {
                             </div>
                         ) : (
                             markets.map((market, idx) => {
-                                const yesMid =
-                                    market.yesBid != null && market.yesAsk != null
-                                        ? (market.yesBid + market.yesAsk) / 2
-                                        : market.yesBid ?? market.yesAsk ?? 0;
-                                const noMid =
-                                    market.noBid != null && market.noAsk != null
-                                        ? (market.noBid + market.noAsk) / 2
-                                        : market.noBid ?? market.noAsk ?? 0;
-                                const yesPrice = Math.round(yesMid * 100);
-                                const noPrice = Math.round(noMid * 100);
+                                const pn = (v: string | number | null | undefined): number | null => {
+                                    if (v == null) return null;
+                                    const n = typeof v === "string" ? parseFloat(v) : v;
+                                    return Number.isFinite(n) ? n : null;
+                                };
+                                const yb = pn(market.yesBid);
+                                const ya = pn(market.yesAsk);
+                                const nb = pn(market.noBid);
+                                const na = pn(market.noAsk);
+                                const yesPrice = Math.round((yb != null && ya != null ? (yb + ya) / 2 : yb ?? ya ?? 0) * 100);
+                                const noPrice = Math.round((nb != null && na != null ? (nb + na) / 2 : nb ?? na ?? 0) * 100);
 
                                 return (
                                     <div

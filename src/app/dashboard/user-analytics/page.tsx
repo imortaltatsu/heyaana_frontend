@@ -488,7 +488,7 @@ export default function UserAnalyticsPage() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
                 {positions.map((p, i) => {
-                  const pnl = p.cashPnl ?? 0;
+                  const pnl = p.cashPnl || ((p.currentValue ?? 0) - (p.size ?? 0) * (p.avgPrice ?? 0));
                   const isPos = pnl >= 0;
                   return (
                     <div key={i} className="p-3 inner-card space-y-2">

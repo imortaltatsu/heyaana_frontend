@@ -12,10 +12,10 @@ export interface DFlowMarket {
     noSubTitle?: string;
     status: string; // "active" | "finalized" | "closed"
     marketType?: string; // "binary"
-    yesBid: number | null;
-    yesAsk: number | null;
-    noBid: number | null;
-    noAsk: number | null;
+    yesBid: string | number | null;
+    yesAsk: string | number | null;
+    noBid: string | number | null;
+    noAsk: string | number | null;
     volume?: number;
     liquidity?: number;
     openInterest?: number;

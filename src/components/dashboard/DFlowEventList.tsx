@@ -402,18 +402,17 @@ export function DFlowEventList() {
                         <tbody>
                             {filtered.map((event) => {
                                 const firstMkt = event.markets?.[0];
-                                const yesMid = firstMkt
-                                    ? (firstMkt.yesBid != null && firstMkt.yesAsk != null
-                                        ? (firstMkt.yesBid + firstMkt.yesAsk) / 2
-                                        : firstMkt.yesBid ?? firstMkt.yesAsk ?? 0)
-                                    : 0;
-                                const noMid = firstMkt
-                                    ? (firstMkt.noBid != null && firstMkt.noAsk != null
-                                        ? (firstMkt.noBid + firstMkt.noAsk) / 2
-                                        : firstMkt.noBid ?? firstMkt.noAsk ?? 0)
-                                    : 0;
-                                const yP = Math.round(yesMid * 100);
-                                const nP = Math.round(noMid * 100);
+                                const parseNum = (v: string | number | null | undefined): number | null => {
+                                    if (v == null) return null;
+                                    const n = typeof v === "string" ? parseFloat(v) : v;
+                                    return Number.isFinite(n) ? n : null;
+                                };
+                                const yb = parseNum(firstMkt?.yesBid);
+                                const ya = parseNum(firstMkt?.yesAsk);
+                                const nb = parseNum(firstMkt?.noBid);
+                                const na = parseNum(firstMkt?.noAsk);
+                                const yP = Math.round((yb != null && ya != null ? (yb + ya) / 2 : yb ?? ya ?? 0) * 100);
+                                const nP = Math.round((nb != null && na != null ? (nb + na) / 2 : nb ?? na ?? 0) * 100);
                                 const ending = isEndingSoon(event.closesAt);
 
                                 return (

@@ -27,16 +27,21 @@ function truncate(str: string, max: number): string {
     return str.length > max ? str.slice(0, max) + "\u2026" : str;
 }
 
+/** Parse a bid/ask value that may be a string, number, or null */
+function num(v: string | number | null | undefined): number | null {
+    if (v == null) return null;
+    const n = typeof v === "string" ? parseFloat(v) : v;
+    return Number.isFinite(n) ? n : null;
+}
+
 /** Get yes/no prices in cents from bid/ask midpoint */
 function getMarketPrices(market: DFlowMarket): { yes: number; no: number } {
-    const yesMid =
-        market.yesBid != null && market.yesAsk != null
-            ? (market.yesBid + market.yesAsk) / 2
-            : market.yesBid ?? market.yesAsk ?? 0;
-    const noMid =
-        market.noBid != null && market.noAsk != null
-            ? (market.noBid + market.noAsk) / 2
-            : market.noBid ?? market.noAsk ?? 0;
+    const yb = num(market.yesBid);
+    const ya = num(market.yesAsk);
+    const nb = num(market.noBid);
+    const na = num(market.noAsk);
+    const yesMid = yb != null && ya != null ? (yb + ya) / 2 : yb ?? ya ?? 0;
+    const noMid = nb != null && na != null ? (nb + na) / 2 : nb ?? na ?? 0;
     return {
         yes: Math.round(yesMid * 100),
         no: Math.round(noMid * 100),
