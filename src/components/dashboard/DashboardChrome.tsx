@@ -27,6 +27,7 @@ import {
   Star,
   Zap,
   Layers,
+  Trophy,
 } from "lucide-react";
 import { UserBadge } from "@/components/dashboard/WalletConnect";
 import { MobileTopBar, MobileBottomNav } from "@/components/dashboard/Sidebar";
@@ -54,6 +55,7 @@ const navItems = [
   { icon: Zap, label: "Auto Trade", href: "/dashboard/auto-trade" },
   { icon: TrendingUp, label: "Trades", href: "/dashboard/social" },
   { icon: Users, label: "Traders", href: "/dashboard/traders" },
+  { icon: Trophy, label: "Leaderboard", href: "/dashboard/leaderboard" },
   { icon: Gift, label: "Referral", href: "/dashboard/referral" },
   { icon: User, label: "Profile", href: "/dashboard/profile" },
 ];
