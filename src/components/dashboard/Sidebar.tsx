@@ -13,13 +13,23 @@ import {
   Users,
   LogOut,
   Zap,
+  Trophy,
+  Gift,
+  Star,
+  Layers,
+  BarChart2,
 } from "lucide-react";
 
 const mobileNavItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Home" },
   { href: "/dashboard/markets", icon: Activity, label: "Markets" },
+  { href: "/dashboard/kalshi-markets", icon: Layers, label: "Kalshi" },
+  { href: "/dashboard/watchlist", icon: Star, label: "Watchlist" },
   { href: "/dashboard/auto-trade", icon: Zap, label: "Auto" },
+  { href: "/dashboard/social", icon: TrendingUp, label: "Trades" },
   { href: "/dashboard/traders", icon: Users, label: "Traders" },
+  { href: "/dashboard/leaderboard", icon: Trophy, label: "Board" },
+  { href: "/dashboard/referral", icon: Gift, label: "Referral" },
   { href: "/dashboard/profile", icon: Settings, label: "Profile" },
 ];
 
@@ -58,7 +68,7 @@ export function MobileBottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="lg:hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1 px-3 py-2 rounded-2xl border border-border bg-[#0D0D14]/90 backdrop-blur-xl shadow-lg shadow-black/40">
+    <nav className="lg:hidden fixed bottom-5 left-3 right-3 z-50 flex items-center gap-1 px-3 py-2 rounded-2xl border border-border bg-[#0D0D14]/90 backdrop-blur-xl shadow-lg shadow-black/40 overflow-x-auto scrollbar-hide">
       {mobileNavItems.map((item) => {
         const isActive = item.href === "/dashboard"
           ? pathname === "/dashboard"
@@ -69,7 +79,7 @@ export function MobileBottomNav() {
           <Link
             key={item.label}
             href={item.href}
-            className={`flex flex-col items-center gap-1 px-3.5 py-1.5 rounded-xl transition-all ${isActive
+            className={`flex flex-col items-center gap-0.5 px-2.5 py-1.5 rounded-xl transition-all shrink-0 ${isActive
                 ? "bg-white/[0.06] text-foreground"
                 : "text-muted hover:text-foreground"
               }`}
