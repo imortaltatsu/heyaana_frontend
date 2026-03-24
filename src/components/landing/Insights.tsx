@@ -4,29 +4,6 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useRef } from "react";
 
-const articles = [
-    {
-        category: "Prediction Markets",
-        categoryColor: "text-gold-accent",
-        title: "How Prediction Markets Work",
-        description: "Understand the mechanics behind prediction markets. Learn how odds form, how trading works, and why these markets matter.",
-        readTime: "9 min read",
-    },
-    {
-        category: "Trading Strategy",
-        categoryColor: "text-blue-light",
-        title: "Strategies for Trading Prediction Markets",
-        description: "Learn realistic approaches to finding alpha. Understand signal detection, position sizing, and risk management.",
-        readTime: "10 min read",
-    },
-    {
-        category: "Market Analysis",
-        categoryColor: "text-gold-accent",
-        title: "Understanding Market Narratives",
-        description: "How narratives move prediction markets, and how to detect when a narrative shift is about to create an opportunity.",
-        readTime: "8 min read",
-    },
-];
 
 export function Insights() {
     const sectionRef = useRef<HTMLElement>(null);
@@ -59,46 +36,23 @@ export function Insights() {
                             <span className="text-blue-primary">Feed</span>
                         </h2>
                     </div>
-                    <a
-                        href="#"
-                        className="inline-flex items-center gap-1 text-sm text-blue-primary hover:text-blue-light transition-colors font-medium"
-                    >
-                        View all articles
-                        <ArrowRight className="w-4 h-4" />
-                    </a>
+                    <span className="inline-flex items-center gap-2 text-sm text-white/40 font-mono">
+                        Coming Soon
+                    </span>
                 </motion.div>
 
-                {/* Article Cards */}
-                <motion.div style={{ y: cardsY }} className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {articles.map((article, i) => (
-                        <motion.a
-                            key={article.title}
-                            href="#"
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5, delay: i * 0.12 }}
-                            className="glass-card metal-hover p-6 sm:p-7 group cursor-pointer block"
-                        >
-                            {/* Category */}
-                            <span className={`text-[10px] font-mono uppercase tracking-[0.15em] ${article.categoryColor}`}>
-                                {article.category}
-                            </span>
-
-                            {/* Title */}
-                            <h3 className="text-lg font-semibold text-white mt-3 mb-3 group-hover:text-blue-light transition-colors leading-snug">
-                                {article.title}
-                            </h3>
-
-                            {/* Description */}
-                            <p className="text-sm text-white/50 leading-relaxed mb-5 line-clamp-3">
-                                {article.description}
-                            </p>
-
-                            {/* Read time */}
-                            <span className="text-xs font-mono text-white/35">{article.readTime}</span>
-                        </motion.a>
-                    ))}
+                {/* Coming Soon placeholder */}
+                <motion.div
+                    style={{ y: cardsY }}
+                    className="glass-card p-12 sm:p-16 flex flex-col items-center justify-center text-center"
+                >
+                    <div className="w-12 h-12 rounded-full border border-blue-primary/30 flex items-center justify-center mb-5">
+                        <ArrowRight className="w-5 h-5 text-blue-primary" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-white mb-2">Coming Soon</h3>
+                    <p className="text-sm text-white/40 max-w-md leading-relaxed">
+                        Deep-dive articles on prediction market strategies, market analysis, and trading insights — stay tuned.
+                    </p>
                 </motion.div>
             </div>
         </section>
