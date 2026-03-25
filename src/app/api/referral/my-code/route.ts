@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const code = await getOrCreateReferralCode(user.user_id);
+    const code = await getOrCreateReferralCode(user.user_id, user.username);
     return NextResponse.json({ code });
   } catch (error) {
     console.error("[referral/my-code]", error);

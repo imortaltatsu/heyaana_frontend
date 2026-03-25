@@ -22,9 +22,20 @@ function generateCode(): string {
 
 /** Get or create a referral code for a user */
 export async function getOrCreateReferralCode(
-  userId: number
+  userId: number,
+  username?: string | null
 ): Promise<string> {
   const sql = getSql();
+
+  // Update username in referral_xp if provided (keeps it current for existing users)
+  if (username) {
+    await sql`
+      INSERT INTO referral_xp (user_id, xp, referral_count, username, updated_at)
+      VALUES (${userId}, 0, 0, ${username}, NOW())
+      ON CONFLICT (user_id) DO UPDATE
+      SET username = ${username}, updated_at = NOW()
+    `;
+  }
 
   // Check if user already has a code
   const existing = asRows(
