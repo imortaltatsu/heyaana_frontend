@@ -3,22 +3,22 @@
 
 CREATE TABLE IF NOT EXISTS referral_codes (
   id SERIAL PRIMARY KEY,
-  user_id INTEGER NOT NULL UNIQUE,
+  user_id BIGINT NOT NULL UNIQUE,
   code VARCHAR(8) NOT NULL UNIQUE,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS referral_claims (
   id SERIAL PRIMARY KEY,
-  referrer_id INTEGER NOT NULL,
-  referee_id INTEGER NOT NULL UNIQUE,  -- each user can only claim once
+  referrer_id BIGINT NOT NULL,
+  referee_id BIGINT NOT NULL UNIQUE,  -- each user can only claim once
   xp_awarded INTEGER NOT NULL DEFAULT 500,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS referral_xp (
   id SERIAL PRIMARY KEY,
-  user_id INTEGER NOT NULL UNIQUE,
+  user_id BIGINT NOT NULL UNIQUE,
   username VARCHAR(100),
   xp INTEGER NOT NULL DEFAULT 0,
   referral_count INTEGER NOT NULL DEFAULT 0,
