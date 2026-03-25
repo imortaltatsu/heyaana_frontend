@@ -105,7 +105,7 @@ function EventDetailContent() {
     const [chartConditionOverride, setChartConditionOverride] = useState<string | null>(null);
 
     const { data: event, isLoading, error } = useSWR<GammaEventRaw | null>(
-        slug ? `/api/gamma?slug=${encodeURIComponent(slug)}&active=true&closed=false` : null,
+        slug ? `/api/gamma/?slug=${encodeURIComponent(slug)}&active=true&closed=false` : null,
         fetchEventBySlug,
         { revalidateOnFocus: false },
     );

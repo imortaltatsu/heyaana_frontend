@@ -72,7 +72,7 @@ function DashboardWidgets() {
   );
 
   const { data: trendingEvents, isLoading: trendingLoading } = useSWR<GammaEventSummary[]>(
-    "/api/gamma?active=true&closed=false&limit=1&order=volume&ascending=false",
+    "/api/gamma/?active=true&closed=false&limit=1&order=volume&ascending=false",
     gammaEventsFetcher,
     { revalidateOnFocus: false, dedupingInterval: 300000 },
   );

@@ -9,7 +9,7 @@ export type ViewMode = "events" | "markets";
 export type LayoutMode = "grid" | "list";
 
 const TRENDING_URL =
-  "/api/gamma?active=true&closed=false&limit=100&order=volume&ascending=false";
+  "/api/gamma/?active=true&closed=false&limit=100&order=volume&ascending=false";
 
 interface Props {
   viewMode: ViewMode;

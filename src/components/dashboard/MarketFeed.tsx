@@ -111,7 +111,7 @@ function buildUrl(tagId: number | null): string {
     ascending: "false",
   });
   if (tagId !== null) p.set("tag_id", String(tagId));
-  return `/api/gamma?${p.toString()}`;
+  return `/api/gamma/?${p.toString()}`;
 }
 
 // ── Component ───────────────────────────────────────────────────

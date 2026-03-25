@@ -15,7 +15,7 @@ interface MarketSearchProps {
     maxHeight?: string;
 }
 
-const TRENDING_URL = "/api/gamma?active=true&closed=false&limit=100&order=volume&ascending=false";
+const TRENDING_URL = "/api/gamma/?active=true&closed=false&limit=100&order=volume&ascending=false";
 
 function formatVolume(v: number): string {
     if (v >= 1_000_000_000) return `$${(v / 1_000_000_000).toFixed(2)}B`;

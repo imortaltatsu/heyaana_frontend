@@ -518,8 +518,8 @@ export function buildGammaUrl(params: {
     if (params.order) p.set("order", params.order);
     if (params.ascending !== undefined) p.set("ascending", String(params.ascending));
     if (params.tag_id !== undefined) p.set("tag_id", String(params.tag_id));
-    // Route through Next.js proxy to avoid CORS
-    return `/api/gamma?${p.toString()}`;
+    // Route through Next.js proxy to avoid CORS (trailing slash to avoid 308 redirect)
+    return `/api/gamma/?${p.toString()}`;
 }
 
 // ─── Trade request ────────────────────────────────────────

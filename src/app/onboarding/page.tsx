@@ -871,7 +871,7 @@ type GammaEvent = {
 
 function TopMarketsPreview() {
   const { data, isLoading } = useSWR<GammaEvent[]>(
-    "/api/gamma?active=true&closed=false&limit=5&order=volume&ascending=false",
+    "/api/gamma/?active=true&closed=false&limit=5&order=volume&ascending=false",
     (url: string) => fetch(url).then(r => r.json()),
     { revalidateOnFocus: false }
   );
