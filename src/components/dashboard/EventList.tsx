@@ -245,6 +245,9 @@ export function EventList() {
     const filteredEvents = useMemo(() => {
         let result = [...events];
 
+        // Skip events with missing title
+        result = result.filter((e) => !!e.title);
+
         // Text search filter (client-side)
         if (debouncedQuery.trim()) {
             const q = debouncedQuery.toLowerCase().trim();
@@ -505,7 +508,7 @@ export function EventList() {
                                 <img src={event.image} alt="" className="w-full h-full object-cover" />
                             ) : (
                                 <span className="text-lg font-bold text-foreground/40">
-                                    {event.title[0]?.toUpperCase()}
+                                    {(event.title ?? "?")[0]?.toUpperCase()}
                                 </span>
                             )}
                         </div>
