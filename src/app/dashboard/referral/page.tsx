@@ -67,18 +67,17 @@ export default function ReferralPage() {
 
   const copyToClipboard = () => {
     if (!referralCode) return;
-    navigator.clipboard.writeText(`https://heyaana.trade/ref/${referralCode}`);
+    navigator.clipboard.writeText(referralCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   const shareLink = () => {
     if (!referralCode) return;
-    const url = `https://heyaana.trade/ref/${referralCode}`;
     if (navigator.share) {
-      navigator.share({ title: "Join me on Heyaana", url });
+      navigator.share({ title: "Join me on Heyaana", text: `Use my referral code: ${referralCode}` });
     } else {
-      navigator.clipboard.writeText(url);
+      navigator.clipboard.writeText(referralCode);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
@@ -108,7 +107,7 @@ export default function ReferralPage() {
     }
   };
 
-  const isComingSoon = !hasSessionToken || (!hasCode && !codeLoading);
+  const isComingSoon = !hasSessionToken;
 
   const stats = [
     { label: "Your XP", value: hasStats ? statsData.xp.toLocaleString() : "\u2014", icon: Star },
@@ -153,8 +152,8 @@ export default function ReferralPage() {
                 )}
                 <span className="text-xs text-muted/50 font-mono truncate">
                   {hasCode
-                    ? `heyaana.trade/ref/${referralCode}`
-                    : "heyaana.trade/ref/\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"}
+                    ? referralCode
+                    : "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"}
                 </span>
                 <button
                   disabled={!hasCode}

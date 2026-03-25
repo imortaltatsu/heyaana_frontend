@@ -78,8 +78,8 @@ export default function LeaderboardPage() {
                 <div className="flex items-center justify-between gap-3">
                   <h2 className="text-base font-bold">Global Leaderboard</h2>
                   {!hasLeaderboard && !lbLoading && (
-                    <span className="text-[9px] font-mono px-2.5 py-1 rounded-full border border-blue-primary/30 text-blue-primary uppercase tracking-widest shrink-0">
-                      Coming Soon
+                    <span className="text-[9px] font-mono px-2.5 py-1 rounded-full border border-border/30 text-muted uppercase tracking-widest shrink-0">
+                      No entries yet
                     </span>
                   )}
                   {lbLoading && <Loader2 className="w-4 h-4 text-muted/40 animate-spin shrink-0" />}
