@@ -3,7 +3,7 @@
 import useSWR from "swr";
 import { gammaFetcher, type Market } from "@/lib/api";
 import { EventCard, EventCardSkeleton, type EventCardData } from "./EventCard";
-import type { ViewMode } from "./MarketFeedNav";
+import type { ViewMode, LayoutMode } from "./MarketFeedNav";
 
 // ── Raw Gamma types for events fetcher ─────────────────────────
 type RawGammaMarket = {
@@ -117,11 +117,12 @@ function buildUrl(tagId: number | null): string {
 // ── Component ───────────────────────────────────────────────────
 interface Props {
   viewMode: ViewMode;
+  layoutMode?: LayoutMode;
   tagId: number | null;
   className?: string;
 }
 
-export function MarketFeed({ viewMode, tagId, className }: Props) {
+export function MarketFeed({ viewMode, layoutMode = "grid", tagId, className }: Props) {
   const url = buildUrl(tagId);
 
   const { data: events, error, isLoading } = useSWR(
@@ -139,9 +140,13 @@ export function MarketFeed({ viewMode, tagId, className }: Props) {
     );
   }
 
+  const gridClass = layoutMode === "list"
+    ? "grid grid-cols-1 gap-2 p-3 content-start"
+    : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-3 content-start";
+
   if (isLoading || !events) {
     return (
-      <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-3 content-start ${className}`}>
+      <div className={`${gridClass} ${className}`}>
         {Array.from({ length: 6 }).map((_, i) => <EventCardSkeleton key={i} />)}
       </div>
     );
@@ -156,7 +161,7 @@ export function MarketFeed({ viewMode, tagId, className }: Props) {
   }
 
   return (
-    <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-3 content-start ${className}`}>
+    <div className={`${gridClass} ${className}`}>
       {events.map((event, i) => (
         <EventCard key={`${event.id}-${i}`} event={event} mode={viewMode} />
       ))}

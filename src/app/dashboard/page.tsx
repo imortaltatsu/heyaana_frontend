@@ -4,7 +4,7 @@ import { useState } from "react";
 import useSWR from "swr";
 import Link from "next/link";
 import { DashboardChrome } from "@/components/dashboard/DashboardChrome";
-import { MarketFeedNav, type ViewMode } from "@/components/dashboard/MarketFeedNav";
+import { MarketFeedNav, type ViewMode, type LayoutMode } from "@/components/dashboard/MarketFeedNav";
 import { MarketFeed } from "@/components/dashboard/MarketFeed";
 import { StatsSidebar, StatsMobileStrip } from "@/components/dashboard/StatsSidebar";
 import { proxyFetcher, type Portfolio, type GammaEventSummary, gammaEventsFetcher } from "@/lib/api";
@@ -163,6 +163,7 @@ function DashboardWidgets() {
 export default function DashboardPage() {
   const [warnDismissed, setWarnDismissed] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("events");
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>("grid");
   const [tagId, setTagId] = useState<number | null>(null);
 
   const { user, isAuthenticated } = useAuth();
@@ -219,6 +220,8 @@ export default function DashboardPage() {
         <MarketFeedNav
           viewMode={viewMode}
           setViewMode={setViewMode}
+          layoutMode={layoutMode}
+          setLayoutMode={setLayoutMode}
           tagId={tagId}
           setTagId={setTagId}
         />
@@ -228,6 +231,7 @@ export default function DashboardPage() {
           {/* Market cards grid */}
           <MarketFeed
             viewMode={viewMode}
+            layoutMode={layoutMode}
             tagId={tagId}
             className="flex-1 overflow-y-auto"
           />

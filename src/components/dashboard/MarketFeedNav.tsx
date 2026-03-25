@@ -1,10 +1,12 @@
 "use client";
 
 import useSWR from "swr";
-import { LayoutGrid, List, Bookmark, SlidersHorizontal } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { LayoutGrid, List, Bookmark } from "lucide-react";
 import { fetchGammaCategories, type GammaCategory } from "@/lib/api";
 
 export type ViewMode = "events" | "markets";
+export type LayoutMode = "grid" | "list";
 
 const TRENDING_URL =
   "/api/gamma?active=true&closed=false&limit=100&order=volume&ascending=false";
@@ -12,11 +14,14 @@ const TRENDING_URL =
 interface Props {
   viewMode: ViewMode;
   setViewMode: (mode: ViewMode) => void;
+  layoutMode: LayoutMode;
+  setLayoutMode: (mode: LayoutMode) => void;
   tagId: number | null;
   setTagId: (id: number | null) => void;
 }
 
-export function MarketFeedNav({ viewMode, setViewMode, tagId, setTagId }: Props) {
+export function MarketFeedNav({ viewMode, setViewMode, layoutMode, setLayoutMode, tagId, setTagId }: Props) {
+  const router = useRouter();
   const { data: categories = [] } = useSWR<GammaCategory[]>(
     TRENDING_URL,
     fetchGammaCategories,
@@ -25,20 +30,37 @@ export function MarketFeedNav({ viewMode, setViewMode, tagId, setTagId }: Props)
 
   return (
     <div className="flex-shrink-0 border-b border-[var(--border-color)] w-full min-w-0 overflow-x-hidden">
-      {/* Top row: view toggles + Events/Markets tabs + Filters */}
+      {/* Top row: view toggles + Events/Markets tabs */}
       <div className="flex items-center gap-1.5 px-3 py-2 min-w-0">
         {/* Grid/List icons — hidden on mobile */}
         <div className="hidden sm:flex items-center gap-0.5 mr-1 flex-shrink-0">
-          <button className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors">
+          <button
+            onClick={() => setLayoutMode("grid")}
+            className={`p-1.5 rounded-lg transition-colors ${
+              layoutMode === "grid"
+                ? "text-[var(--foreground)] bg-white/10"
+                : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5"
+            }`}
+          >
             <LayoutGrid className="w-4 h-4" />
           </button>
-          <button className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors">
+          <button
+            onClick={() => setLayoutMode("list")}
+            className={`p-1.5 rounded-lg transition-colors ${
+              layoutMode === "list"
+                ? "text-[var(--foreground)] bg-white/10"
+                : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5"
+            }`}
+          >
             <List className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Watchlist — hidden on mobile */}
-        <button className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors rounded-full whitespace-nowrap flex-shrink-0">
+        {/* Watchlist */}
+        <button
+          onClick={() => router.push("/dashboard/watchlist")}
+          className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-sm text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors rounded-full whitespace-nowrap flex-shrink-0"
+        >
           <Bookmark className="w-3.5 h-3.5" />
           Watchlist
         </button>
@@ -59,12 +81,6 @@ export function MarketFeedNav({ viewMode, setViewMode, tagId, setTagId }: Props)
             </button>
           ))}
         </div>
-
-        {/* Filters button — pushed to right */}
-        <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--blue-primary)] text-white text-sm rounded-full font-medium ml-auto flex-shrink-0">
-          <SlidersHorizontal className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">Filters</span>
-        </button>
       </div>
 
       {/* Category pills row — horizontally scrollable */}
