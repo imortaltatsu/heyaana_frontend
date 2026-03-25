@@ -12,9 +12,10 @@ export async function GET(req: NextRequest) {
     const code = await getOrCreateReferralCode(user.user_id, user.username);
     return NextResponse.json({ code });
   } catch (error) {
-    console.error("[referral/my-code]", error);
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error("[referral/my-code]", msg, error);
     return NextResponse.json(
-      { error: "Failed to get referral code" },
+      { error: "Failed to get referral code", detail: msg },
       { status: 500 }
     );
   }

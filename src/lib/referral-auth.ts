@@ -13,9 +13,10 @@ export async function verifyUser(
     });
     if (!res.ok) return null;
     const data = await res.json();
-    return data?.user_id
-      ? { user_id: data.user_id, username: data.username ?? null }
-      : null;
+    if (!data?.user_id) return null;
+    const user_id = typeof data.user_id === "string" ? parseInt(data.user_id, 10) : Number(data.user_id);
+    if (isNaN(user_id)) return null;
+    return { user_id, username: data.username ?? null };
   } catch {
     return null;
   }

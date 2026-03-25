@@ -27,14 +27,18 @@ export async function getOrCreateReferralCode(
 ): Promise<string> {
   const sql = getSql();
 
-  // Update username in referral_xp if provided (keeps it current for existing users)
+  // Update username in referral_xp if provided (non-blocking, best-effort)
   if (username) {
-    await sql`
-      INSERT INTO referral_xp (user_id, xp, referral_count, username, updated_at)
-      VALUES (${userId}, 0, 0, ${username}, NOW())
-      ON CONFLICT (user_id) DO UPDATE
-      SET username = ${username}, updated_at = NOW()
-    `;
+    try {
+      await sql`
+        INSERT INTO referral_xp (user_id, xp, referral_count, username, updated_at)
+        VALUES (${userId}, 0, 0, ${username}, NOW())
+        ON CONFLICT (user_id) DO UPDATE
+        SET username = ${username}, updated_at = NOW()
+      `;
+    } catch {
+      // Non-critical — don't block code generation
+    }
   }
 
   // Check if user already has a code
@@ -168,18 +172,8 @@ export async function getUserReferralStats(userId: number, username?: string | n
 }> {
   const sql = getSql();
 
-  // Ensure the user has a referral code
-  const referralCode = await getOrCreateReferralCode(userId);
-
-  // Upsert username if provided
-  if (username) {
-    await sql`
-      INSERT INTO referral_xp (user_id, xp, referral_count, username, updated_at)
-      VALUES (${userId}, 0, 0, ${username}, NOW())
-      ON CONFLICT (user_id) DO UPDATE
-      SET username = ${username}, updated_at = NOW()
-    `;
-  }
+  // Ensure the user has a referral code (also upserts username)
+  const referralCode = await getOrCreateReferralCode(userId, username);
 
   // Get XP row (may not exist yet)
   const xpRows = asRows(
