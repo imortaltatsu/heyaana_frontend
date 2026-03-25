@@ -23,7 +23,7 @@ const publicFetcher = (url: string) =>
     return r.json();
   });
 
-type LeaderboardEntry = { rank: number; userId: string; xp: number; referralCount: number };
+type LeaderboardEntry = { rank: number; userId: string; username: string | null; xp: number; referralCount: number };
 
 const placeholderRows = [
   { rank: 1, name: "crypto_whale_9f", xp: "48,200", refs: "34", vol: "$1.2M" },
@@ -106,7 +106,7 @@ export default function LeaderboardPage() {
                   <p.icon className={`w-6 h-6 ${p.color} ${isFirst ? "w-8 h-8" : ""}`} />
                   <p className={`text-xs font-mono ${p.color} mt-2`}>{p.place}</p>
                   <p className={`text-xs font-mono text-muted mt-1.5 ${!isReal ? "blur-[3px] select-none" : ""}`}>
-                    {isReal ? `User #${lbEntry!.userId}` : placeholderRow.name}
+                    {isReal ? (lbEntry!.username || `User #${lbEntry!.userId}`) : placeholderRow.name}
                   </p>
                   <p className={`text-sm font-bold font-mono ${p.color} mt-1 ${!isReal ? "blur-[3px] select-none" : ""}`}>
                     {isReal ? `${lbEntry!.xp.toLocaleString()} XP` : `${placeholderRow.xp} XP`}
@@ -161,7 +161,7 @@ export default function LeaderboardPage() {
                         ? ["\ud83e\udd47", "\ud83e\udd48", "\ud83e\udd49"][(row.rank ?? i + 1) - 1]
                         : <span className="text-muted">{row.rank ?? i + 1}</span>}
                     </span>
-                    <span className="text-xs font-mono text-muted">User #{row.userId}</span>
+                    <span className="text-xs font-mono text-muted">{row.username || `User #${row.userId}`}</span>
                     <span className="text-xs font-mono text-muted text-right">{row.xp.toLocaleString()}</span>
                     <span className="text-xs font-mono text-muted text-right">{row.referralCount}</span>
                   </div>

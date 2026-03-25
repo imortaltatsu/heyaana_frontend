@@ -66,7 +66,8 @@ export async function getOrCreateReferralCode(
  */
 export async function claimReferralCode(
   refereeId: number,
-  code: string
+  code: string,
+  refereeUsername?: string | null
 ): Promise<{
   success: boolean;
   message: string;
@@ -125,10 +126,11 @@ export async function claimReferralCode(
 
   // 6. Upsert XP for the referee (+REFEREE_XP)
   await sql`
-    INSERT INTO referral_xp (user_id, xp, referral_count, updated_at)
-    VALUES (${refereeId}, ${REFEREE_XP}, 0, NOW())
+    INSERT INTO referral_xp (user_id, xp, referral_count, updated_at, username)
+    VALUES (${refereeId}, ${REFEREE_XP}, 0, NOW(), ${refereeUsername})
     ON CONFLICT (user_id) DO UPDATE
     SET xp = referral_xp.xp + ${REFEREE_XP},
+        username = COALESCE(${refereeUsername}, referral_xp.username),
         updated_at = NOW()
   `;
 
@@ -147,7 +149,7 @@ export async function claimReferralCode(
 }
 
 /** Get referral stats for a user: xp, rank, referralCount, referralCode */
-export async function getUserReferralStats(userId: number): Promise<{
+export async function getUserReferralStats(userId: number, username?: string | null): Promise<{
   xp: number;
   rank: number;
   referralCount: number;
@@ -157,6 +159,16 @@ export async function getUserReferralStats(userId: number): Promise<{
 
   // Ensure the user has a referral code
   const referralCode = await getOrCreateReferralCode(userId);
+
+  // Upsert username if provided
+  if (username) {
+    await sql`
+      INSERT INTO referral_xp (user_id, xp, referral_count, username, updated_at)
+      VALUES (${userId}, 0, 0, ${username}, NOW())
+      ON CONFLICT (user_id) DO UPDATE
+      SET username = ${username}, updated_at = NOW()
+    `;
+  }
 
   // Get XP row (may not exist yet)
   const xpRows = asRows(
@@ -184,6 +196,7 @@ export async function getLeaderboard(
   Array<{
     rank: number;
     userId: number;
+    username: string | null;
     xp: number;
     referralCount: number;
   }>
@@ -191,7 +204,7 @@ export async function getLeaderboard(
   const sql = getSql();
 
   const rows = asRows(await sql`
-    SELECT user_id, xp, referral_count
+    SELECT user_id, username, xp, referral_count
     FROM referral_xp
     WHERE xp > 0
     ORDER BY xp DESC, updated_at ASC
@@ -201,6 +214,7 @@ export async function getLeaderboard(
   return rows.map((row: Row, index: number) => ({
     rank: index + 1,
     userId: row.user_id,
+    username: row.username ?? null,
     xp: row.xp,
     referralCount: row.referral_count,
   }));

@@ -57,7 +57,7 @@ export default function ReferralPage() {
   const referralCode = codeData?.code || statsData?.referralCode || "";
   const hasCode = !!referralCode;
   const hasStats = !!statsData && typeof statsData.xp === "number";
-  const leaderboard = lbData?.leaderboard as { rank: number; userId: string; xp: number; referralCount: number }[] | undefined;
+  const leaderboard = lbData?.leaderboard as { rank: number; userId: string; username: string | null; xp: number; referralCount: number }[] | undefined;
   const hasLeaderboard = Array.isArray(leaderboard) && leaderboard.length > 0;
 
   const [copied, setCopied] = useState(false);
@@ -260,7 +260,7 @@ export default function ReferralPage() {
                             ? ["\ud83e\udd47", "\ud83e\udd48", "\ud83e\udd49"][(entry.rank ?? i + 1) - 1]
                             : `${entry.rank ?? i + 1}`}
                         </span>
-                        <span className="text-xs text-muted font-mono">User #{entry.userId}</span>
+                        <span className="text-xs text-muted font-mono">{entry.username || `User #${entry.userId}`}</span>
                         <span className="text-xs text-muted font-mono text-right">{entry.xp.toLocaleString()}</span>
                       </div>
                     ))

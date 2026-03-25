@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const stats = await getUserReferralStats(user.user_id);
+    const stats = await getUserReferralStats(user.user_id, user.username);
     return NextResponse.json(stats);
   } catch (error) {
     console.error("[referral/stats]", error);

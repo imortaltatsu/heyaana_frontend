@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const result = await claimReferralCode(user.user_id, code);
+    const result = await claimReferralCode(user.user_id, code, user.username);
     return NextResponse.json(result);
   } catch (error) {
     console.error("[referral/claim]", error);
