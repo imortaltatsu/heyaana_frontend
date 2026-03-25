@@ -227,10 +227,10 @@ export function EventList() {
     );
 
     const endpoint = buildGammaUrl({
-        ...(isSearching ? { title: debouncedQuery } : { tag_id: activeTagId ?? undefined }),
+        tag_id: isSearching ? undefined : (activeTagId ?? undefined),
         order: "volume",
         ascending: false,
-        limit: 40,
+        limit: isSearching ? 100 : 40,
     });
 
     const {
@@ -244,6 +244,12 @@ export function EventList() {
 
     const filteredEvents = useMemo(() => {
         let result = [...events];
+
+        // Text search filter (client-side)
+        if (debouncedQuery.trim()) {
+            const q = debouncedQuery.toLowerCase().trim();
+            result = result.filter((e) => e.title.toLowerCase().includes(q));
+        }
 
         // Volume filter
         const volMin = VOLUME_OPTIONS.find((o) => o.value === volumeFilter)?.min ?? 0;
@@ -288,7 +294,7 @@ export function EventList() {
         });
 
         return result;
-    }, [events, volumeFilter, liquidityFilter, expiryFilter, sortBy]);
+    }, [events, debouncedQuery, volumeFilter, liquidityFilter, expiryFilter, sortBy]);
 
     const tableSortedEvents = useMemo(() => {
         if (viewMode !== "table") return filteredEvents;
