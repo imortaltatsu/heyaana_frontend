@@ -226,11 +226,11 @@ export function EventList() {
         { revalidateOnFocus: false, dedupingInterval: 300000 },
     );
 
-    const endpoint = buildGammaUrl({
-        tag_id: isSearching ? undefined : (activeTagId ?? undefined),
+    const browseEndpoint = buildGammaUrl({
+        tag_id: activeTagId ?? undefined,
         order: "volume",
         ascending: false,
-        limit: isSearching ? 100 : 40,
+        limit: 100,
     });
 
     const {
@@ -238,7 +238,7 @@ export function EventList() {
         isLoading,
         error,
         mutate,
-    } = useSWR<GammaEventSummary[]>(endpoint, gammaEventsFetcher, {
+    } = useSWR<GammaEventSummary[]>(browseEndpoint, gammaEventsFetcher, {
         revalidateOnFocus: false,
     });
 
