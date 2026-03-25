@@ -3,7 +3,7 @@
 import { useMemo, memo } from "react";
 import useSWR from "swr";
 import { fetcher, MetaStatsResponse, refreshCache } from "@/lib/api";
-import { Loader2, RefreshCw, TrendingUp, TrendingDown, ArrowRight } from "lucide-react";
+import { Loader2, RefreshCw, TrendingUp, TrendingDown } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -224,7 +224,6 @@ export function DashboardSummary() {
                                 <span className="text-xs font-medium text-muted uppercase tracking-wider">
                                     {stat.label}
                                 </span>
-                                <span className="text-xs text-muted">↗</span>
                             </div>
 
                             {/* Value */}
