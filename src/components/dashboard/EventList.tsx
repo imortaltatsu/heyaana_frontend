@@ -230,7 +230,7 @@ export function EventList() {
         ...(isSearching ? {} : { tag_id: activeTagId ?? undefined }),
         order: "volume",
         ascending: false,
-        limit: 100,
+        limit: 50,
     });
 
     const {
