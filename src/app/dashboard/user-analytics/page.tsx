@@ -157,11 +157,12 @@ export default function UserAnalyticsPage() {
   const chartData = useMemo(() => {
     if (!positions) return [];
     return positions
-      .filter((p) => p.cashPnl != null && p.title)
+      .filter((p) => p.title && p.cashPnl != null && Math.abs(p.cashPnl) > 0.001)
+      .sort((a, b) => Math.abs(b.cashPnl ?? 0) - Math.abs(a.cashPnl ?? 0))
       .slice(0, 15)
       .map((p) => ({
         name: truncate(p.title ?? "", 25),
-        pnl: p.cashPnl ?? 0,
+        pnl: Math.round((p.cashPnl ?? 0) * 100) / 100,
       }));
   }, [positions]);
 
@@ -315,11 +316,13 @@ export default function UserAnalyticsPage() {
                       border: "1px solid rgba(255,255,255,0.08)",
                       borderRadius: 12,
                       fontSize: 12,
+                      color: "#fff",
                     }}
-                    labelStyle={{ color: "#aaa" }}
+                    labelStyle={{ color: "#ccc" }}
+                    itemStyle={{ color: "#fff" }}
                   />
                   <Legend
-                    wrapperStyle={{ fontSize: 10, fontFamily: "var(--font-geist-mono)" }}
+                    wrapperStyle={{ fontSize: 10, fontFamily: "var(--font-geist-mono)", color: "#ccc" }}
                     iconType="circle"
                     iconSize={8}
                   />
@@ -349,8 +352,9 @@ export default function UserAnalyticsPage() {
                   <YAxis type="category" dataKey="name" width={160} tick={{ fontSize: 10, fill: "#888" }} />
                   <Tooltip
                     formatter={(v) => [fmtUsd(v as number), "PnL"]}
-                    contentStyle={{ background: "#16161f", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, fontSize: 12 }}
-                    labelStyle={{ color: "#aaa" }}
+                    contentStyle={{ background: "#16161f", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, fontSize: 12, color: "#fff" }}
+                    labelStyle={{ color: "#ccc" }}
+                    itemStyle={{ color: "#fff" }}
                   />
                   <Bar dataKey="pnl" radius={[0, 4, 4, 0]}>
                     {chartData.map((d, i) => (
