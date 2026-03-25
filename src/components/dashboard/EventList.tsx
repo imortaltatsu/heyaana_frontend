@@ -226,8 +226,8 @@ export function EventList() {
         { revalidateOnFocus: false, dedupingInterval: 300000 },
     );
 
-    const browseEndpoint = buildGammaUrl({
-        tag_id: activeTagId ?? undefined,
+    const endpoint = buildGammaUrl({
+        ...(isSearching ? {} : { tag_id: activeTagId ?? undefined }),
         order: "volume",
         ascending: false,
         limit: 100,
@@ -238,11 +238,13 @@ export function EventList() {
         isLoading,
         error,
         mutate,
-    } = useSWR<GammaEventSummary[]>(browseEndpoint, gammaEventsFetcher, {
+    } = useSWR<GammaEventSummary[]>(endpoint, gammaEventsFetcher, {
         revalidateOnFocus: false,
+        keepPreviousData: true,
     });
 
     const filteredEvents = useMemo(() => {
+        if (!events || !Array.isArray(events)) return [];
         let result = [...events];
 
         // Skip events with missing title
