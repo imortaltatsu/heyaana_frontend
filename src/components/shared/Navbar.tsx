@@ -19,13 +19,13 @@ const navLinks = [
 export function Navbar() {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [visible, setVisible] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [mobileModalOpen, setMobileModalOpen] = useState(false);
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
-      setVisible(window.scrollY > 100);
+      setScrolled(window.scrollY > 100);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
@@ -34,9 +34,9 @@ export function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${visible
-          ? "translate-y-0 opacity-100 bg-[#060B1A]/90 backdrop-blur-xl border-b border-white/5"
-          : "-translate-y-full opacity-0 pointer-events-none"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${scrolled
+          ? "bg-[#060B1A]/90 backdrop-blur-xl border-b border-white/5"
+          : "bg-transparent"
         }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
