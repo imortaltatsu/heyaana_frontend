@@ -25,6 +25,8 @@ import {
   PieChart,
   Pie,
   Legend,
+  CartesianGrid,
+  ReferenceLine,
 } from "recharts";
 import {
   Wallet,
@@ -346,19 +348,35 @@ export default function UserAnalyticsPage() {
                 No position data available
               </div>
             ) : (
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={chartData} layout="vertical" margin={{ left: 10, right: 20 }}>
-                  <XAxis type="number" tick={{ fontSize: 11, fill: "#888" }} tickFormatter={(v: number) => `$${v.toFixed(0)}`} />
-                  <YAxis type="category" dataKey="name" width={160} tick={{ fontSize: 10, fill: "#888" }} />
+              <ResponsiveContainer width="100%" height={Math.max(300, chartData.length * 40 + 40)}>
+                <BarChart data={chartData} layout="vertical" margin={{ left: 10, right: 30, top: 5, bottom: 5 }}>
+                  <CartesianGrid horizontal={false} strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                  <XAxis
+                    type="number"
+                    tick={{ fontSize: 11, fill: "#888" }}
+                    tickFormatter={(v: number) => fmtUsd(v)}
+                    axisLine={{ stroke: "rgba(255,255,255,0.1)" }}
+                    tickLine={false}
+                  />
+                  <YAxis
+                    type="category"
+                    dataKey="name"
+                    width={140}
+                    tick={{ fontSize: 11, fill: "#aaa" }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
                   <Tooltip
                     formatter={(v) => [fmtUsd(v as number), "PnL"]}
                     contentStyle={{ background: "#16161f", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, fontSize: 12, color: "#fff" }}
                     labelStyle={{ color: "#ccc" }}
                     itemStyle={{ color: "#fff" }}
+                    cursor={{ fill: "rgba(255,255,255,0.03)" }}
                   />
-                  <Bar dataKey="pnl" radius={[0, 4, 4, 0]}>
+                  <ReferenceLine x={0} stroke="rgba(255,255,255,0.2)" strokeWidth={1} />
+                  <Bar dataKey="pnl" radius={[4, 4, 4, 4]} barSize={20} animationDuration={800}>
                     {chartData.map((d, i) => (
-                      <Cell key={i} fill={d.pnl >= 0 ? "#34d399" : "#f87171"} />
+                      <Cell key={i} fill={d.pnl >= 0 ? "#34d399" : "#f87171"} fillOpacity={0.85} />
                     ))}
                   </Bar>
                 </BarChart>
