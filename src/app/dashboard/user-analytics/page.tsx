@@ -146,10 +146,15 @@ export default function UserAnalyticsPage() {
 
   // ─── Computed stats ──────────────────────────────────
 
+  const getPnl = (p: PolyPositionEntry) => {
+    if (p.cashPnl && Math.abs(p.cashPnl) > 0.001) return p.cashPnl;
+    return (p.currentValue ?? 0) - (p.initialValue ?? 0);
+  };
+
   const stats = useMemo(() => {
     if (!positions) return null;
-    const totalPnl = positions.reduce((s, p) => s + (p.cashPnl ?? 0), 0);
-    const winners = positions.filter((p) => (p.cashPnl ?? 0) > 0).length;
+    const totalPnl = positions.reduce((s, p) => s + getPnl(p), 0);
+    const winners = positions.filter((p) => getPnl(p) > 0).length;
     const winRate = positions.length > 0 ? (winners / positions.length) * 100 : 0;
     return { totalPnl, winRate, openCount: positions.length };
   }, [positions]);
@@ -159,12 +164,20 @@ export default function UserAnalyticsPage() {
   const chartData = useMemo(() => {
     if (!positions) return [];
     return positions
-      .filter((p) => p.title && p.cashPnl != null && Math.abs(p.cashPnl) > 0.001)
-      .sort((a, b) => Math.abs(b.cashPnl ?? 0) - Math.abs(a.cashPnl ?? 0))
+      .filter((p) => !!p.title)
+      .map((p) => {
+        // Use cashPnl if available, otherwise compute from currentValue - initialValue
+        const pnl = (p.cashPnl && Math.abs(p.cashPnl) > 0.001)
+          ? p.cashPnl
+          : ((p.currentValue ?? 0) - (p.initialValue ?? 0));
+        return { title: p.title!, pnl };
+      })
+      .filter((p) => Math.abs(p.pnl) > 0.001)
+      .sort((a, b) => Math.abs(b.pnl) - Math.abs(a.pnl))
       .slice(0, 15)
       .map((p) => ({
-        name: truncate(p.title ?? "", 25),
-        pnl: Math.round((p.cashPnl ?? 0) * 100) / 100,
+        name: truncate(p.title, 25),
+        pnl: Math.round(p.pnl * 100) / 100,
       }));
   }, [positions]);
 
