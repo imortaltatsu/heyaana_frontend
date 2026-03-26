@@ -449,7 +449,7 @@ function MarketDetailContent() {
                       <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
                       <div className="space-y-1">
                         <p className="font-semibold">Insufficient USDC on Base</p>
-                        <p className="text-amber-400/70 whitespace-pre-line leading-relaxed">{paymentError.message}</p>
+                        <p className="text-amber-400/70 whitespace-pre-line leading-relaxed break-all">{paymentError.message}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 pt-1">
