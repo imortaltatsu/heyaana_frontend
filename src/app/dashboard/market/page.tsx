@@ -100,14 +100,21 @@ function MarketDetailContent() {
     return () => clearTimeout(timer);
   }, [copied]);
 
+  const [paymentError, setPaymentError] = useState<{ message: string; fee?: string; chain?: string } | null>(null);
+
   async function handleAnalyze(query: string) {
     setAnalysisLoading(true);
     setAnalysisError(null);
+    setPaymentError(null);
     try {
       const result = await analyzeMarket(query);
       setAnalysis(result);
-    } catch (err) {
-      setAnalysisError(err instanceof Error ? err.message : "Analysis failed");
+    } catch (err: any) {
+      if (err?.code === "PAYMENT_REQUIRED") {
+        setPaymentError({ message: err.message, fee: err.fee, chain: err.chain });
+      } else {
+        setAnalysisError(err instanceof Error ? err.message : "Analysis failed");
+      }
     } finally {
       setAnalysisLoading(false);
     }
@@ -413,15 +420,15 @@ function MarketDetailContent() {
                   </div>
                   {!analysis && !analysisLoading && (
                     <button
-                      onClick={() => handleAnalyze(market.title)}
+                      onClick={() => { setPaymentError(null); handleAnalyze(market.title); }}
                       className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-blue-500/30 text-blue-400 hover:bg-blue-500/10 transition-all"
                     >
-                      <Sparkles className="w-3 h-3" /> Analyze
+                      <Sparkles className="w-3 h-3" /> Analyze &middot; $0.10
                     </button>
                   )}
                   {analysis && !analysisLoading && (
                     <button
-                      onClick={() => { setAnalysis(null); setAnalysisError(null); }}
+                      onClick={() => { setAnalysis(null); setAnalysisError(null); setPaymentError(null); }}
                       className="text-[10px] font-mono text-muted hover:text-foreground transition-colors"
                     >
                       Clear
@@ -432,7 +439,27 @@ function MarketDetailContent() {
                 {analysisLoading && (
                   <div className="flex items-center gap-2 py-4 justify-center text-muted">
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span className="text-xs font-mono animate-pulse">Analyzing market…</span>
+                    <span className="text-xs font-mono animate-pulse">Processing payment &amp; analyzing…</span>
+                  </div>
+                )}
+
+                {paymentError && (
+                  <div className="px-3 py-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs font-mono space-y-2">
+                    <div className="flex items-start gap-2 text-amber-400">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                      <div className="space-y-1">
+                        <p className="font-semibold">Insufficient USDC on Base</p>
+                        <p className="text-amber-400/70 whitespace-pre-line leading-relaxed">{paymentError.message}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 pt-1">
+                      <button
+                        onClick={() => { setPaymentError(null); handleAnalyze(market.title); }}
+                        className="px-2.5 py-1 rounded-md bg-amber-500/15 border border-amber-500/25 text-amber-300 text-[10px] font-semibold hover:bg-amber-500/25 transition-all"
+                      >
+                        Retry
+                      </button>
+                    </div>
                   </div>
                 )}
 
@@ -442,9 +469,9 @@ function MarketDetailContent() {
                   </div>
                 )}
 
-                {!analysis && !analysisLoading && !analysisError && (
+                {!analysis && !analysisLoading && !analysisError && !paymentError && (
                   <p className="text-xs text-muted font-mono text-center py-2">
-                    Get AI-powered news, forecast &amp; risk score for this market.
+                    AI-powered news, forecast &amp; risk score — $0.10 USDC on Base per analysis.
                   </p>
                 )}
 
@@ -505,6 +532,10 @@ function MarketDetailContent() {
                     )}
                   </div>
                 )}
+
+                <p className="text-[9px] font-mono text-muted/40 text-center pt-1">
+                  Powered by <a href="https://x402.heyelsa.ai/docs" target="_blank" rel="noopener noreferrer" className="text-muted/60 hover:text-muted transition-colors">ElsaX402</a>
+                </p>
               </div>
             </div>
           </div>

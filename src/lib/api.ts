@@ -1170,7 +1170,17 @@ export async function analyzeMarket(query: string): Promise<MarketAnalysis> {
         body: JSON.stringify({ query }),
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error ?? data.detail ?? "Analysis failed");
+    if (!res.ok) {
+        if (res.status === 402 && data.detail?.error === "payment_required") {
+            const err = new Error(data.detail.message ?? "Payment required");
+            (err as any).code = "PAYMENT_REQUIRED";
+            (err as any).fee = data.detail.fee_usdc;
+            (err as any).chain = data.detail.chain;
+            (err as any).chainId = data.detail.chain_id;
+            throw err;
+        }
+        throw new Error(data.error ?? data.detail?.message ?? data.detail ?? "Analysis failed");
+    }
     return data as MarketAnalysis;
 }
 
