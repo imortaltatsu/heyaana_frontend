@@ -161,6 +161,13 @@ export default function UserAnalyticsPage() {
     return cv - iv;
   };
 
+  // Debug: log raw position data to verify API field types
+  if (positions?.length) {
+    const p = positions[0];
+    console.log("[PnL Debug] raw fields:", { cashPnl: p.cashPnl, currentValue: p.currentValue, initialValue: p.initialValue, percentPnl: p.percentPnl, size: p.size, avgPrice: p.avgPrice });
+    console.log("[PnL Debug] getPnl:", getPnl(p));
+  }
+
   const stats = useMemo(() => {
     if (!positions) return null;
     const totalPnl = positions.reduce((s, p) => s + getPnl(p), 0);
@@ -528,7 +535,8 @@ export default function UserAnalyticsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
                 {positions.map((p, i) => {
                   const pnl = getPnl(p);
-                  const isPos = pnl >= 0;
+                  const pct = Number(p.percentPnl) || 0;
+                  const isPos = pct >= 0;
                   return (
                     <div key={i} className="p-3 inner-card space-y-2">
                       <div className="flex items-start justify-between gap-2">
@@ -536,7 +544,7 @@ export default function UserAnalyticsPage() {
                           {p.title ?? "Unknown"}
                         </div>
                         <span className={`text-[10px] font-mono font-bold ${isPos ? "text-emerald-400" : "text-red-400"}`}>
-                          {fmtUsd(pnl)}
+                          {fmtPct(pct)}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
@@ -547,16 +555,16 @@ export default function UserAnalyticsPage() {
                             {p.outcome}
                           </span>
                         )}
-                        <span className="text-[10px] font-mono text-muted">{fmtPct(p.percentPnl)}</span>
+                        <span className="text-[10px] font-mono text-muted">{fmtUsd(pnl)}</span>
                       </div>
                       <div className="grid grid-cols-3 gap-2 text-[10px] font-mono text-muted">
                         <div>
                           <div className="uppercase tracking-wider text-[8px]">Size</div>
-                          <div className="text-foreground">{(p.size ?? 0).toFixed(2)}</div>
+                          <div className="text-foreground">{(Number(p.size) || 0).toFixed(2)}</div>
                         </div>
                         <div>
                           <div className="uppercase tracking-wider text-[8px]">Avg</div>
-                          <div className="text-foreground">{((p.avgPrice ?? 0) * 100).toFixed(1)}¢</div>
+                          <div className="text-foreground">{((Number(p.avgPrice) || 0) * 100).toFixed(1)}¢</div>
                         </div>
                         <div>
                           <div className="uppercase tracking-wider text-[8px]">Value</div>
