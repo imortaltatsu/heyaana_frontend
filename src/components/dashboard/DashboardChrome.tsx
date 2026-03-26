@@ -583,14 +583,19 @@ export function DashboardChrome({ title, children }: DashboardChromeProps) {
                         const timeStr = typeof rawTime === "number"
                           ? new Date(rawTime * 1000).toISOString()
                           : (rawTime as string | undefined);
-                        return (
-                          <div key={n.id ?? i} className="px-4 py-3 hover:bg-white/[0.02] transition-colors">
+                        const leaderHref = n.leader_address
+                          ? `/dashboard/traders/${encodeURIComponent(n.leader_address)}?wallet=${encodeURIComponent(n.leader_address)}${n.leader_username ? `&name=${encodeURIComponent(n.leader_username)}` : ""}`
+                          : n.leader_username
+                            ? `/dashboard/traders/${n.leader_username}`
+                            : null;
+                        const rowCls = "block px-4 py-3 hover:bg-white/[0.02] transition-colors cursor-pointer";
+                        const inner = (
                             <div className="flex items-start gap-2">
                               <span className={`mt-0.5 w-1.5 h-1.5 rounded-full shrink-0 ${isSuccess ? "bg-emerald-400" : isFailed ? "bg-red-400" : isSignal ? "bg-blue-primary" : "bg-amber-400"}`} />
                               <div className="flex-1 min-w-0">
                                 <p className="text-xs font-medium truncate">{n.market_title ?? n.message ?? "Copy Trade"}</p>
                                 <div className="flex items-center gap-2 mt-0.5 text-[10px] font-mono text-muted flex-wrap">
-                                  {n.leader_username && <span>@{n.leader_username}</span>}
+                                  {n.leader_username && <span className="text-blue-primary/80">@{n.leader_username}</span>}
                                   {n.asset && n.direction && (
                                     <span className={n.direction === "UP" ? "text-emerald-400" : "text-red-400"}>
                                       {n.asset} {n.direction === "UP" ? "▲" : "▼"}
@@ -615,7 +620,11 @@ export function DashboardChrome({ title, children }: DashboardChromeProps) {
                                 )}
                               </div>
                             </div>
-                          </div>
+                        );
+                        return leaderHref ? (
+                          <Link key={n.id ?? i} href={leaderHref} className={rowCls}>{inner}</Link>
+                        ) : (
+                          <div key={n.id ?? i} className={rowCls}>{inner}</div>
                         );
                       })}
                     </div>

@@ -25,6 +25,8 @@ import {
   Clock,
 } from "lucide-react";
 import { useAuth } from "@/lib/useAuth";
+import Link from "next/link";
+import { Copy } from "lucide-react";
 
 /* ── Types ─────────────────────────────────────────────── */
 
@@ -396,20 +398,34 @@ export function AutoTrading() {
               const isWhale = flag.kind === "whale";
               const timeStr = new Date(flag.executed_at * 1000).toISOString();
               const walletShort = flag.wallet.slice(0, 6) + "…" + flag.wallet.slice(-4);
+              const profileHref = `/dashboard/traders/${encodeURIComponent(flag.wallet)}?wallet=${encodeURIComponent(flag.wallet)}`;
 
               return (
-                <div
+                <Link
                   key={flag.id}
-                  className="grid grid-cols-[1fr_70px_70px] gap-2 items-center px-4 py-2.5 border-b border-border/30 hover:bg-surface/60 transition-all"
+                  href={profileHref}
+                  className="grid grid-cols-[1fr_70px_70px] gap-2 items-center px-4 py-2.5 border-b border-border/30 hover:bg-surface/60 transition-all cursor-pointer"
                 >
                   <div className="min-w-0">
                     <p className="text-xs font-medium truncate">{flag.market_title}</p>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className="text-[10px] font-mono text-muted/50">{walletShort}</span>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          navigator.clipboard.writeText(flag.wallet);
+                        }}
+                        className="inline-flex items-center gap-0.5 text-[10px] font-mono text-muted/50 hover:text-foreground transition-colors"
+                        title="Copy wallet address"
+                      >
+                        <Copy className="w-2.5 h-2.5" />
+                      </button>
                       <a
                         href={`https://polygonscan.com/tx/${flag.tx_hash}`}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
                         className="inline-flex items-center gap-0.5 text-[10px] font-mono text-blue-primary/60 hover:text-blue-primary transition-colors"
                       >
                         tx
@@ -432,7 +448,7 @@ export function AutoTrading() {
                   <div className="text-right">
                     <span className="text-xs font-bold font-mono">{fmtUsd(flag.trade_usd)}</span>
                   </div>
-                </div>
+                </Link>
               );
             })
           )}
