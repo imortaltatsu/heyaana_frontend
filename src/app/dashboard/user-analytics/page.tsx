@@ -46,14 +46,16 @@ import {
 
 // ─── Helpers ─────────────────────────────────────────────
 
-function fmtUsd(n: number | null | undefined): string {
-  if (n == null || !Number.isFinite(n)) return "$0.00";
-  return `${n < 0 ? "-" : ""}$${Math.abs(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+function fmtUsd(n: number | string | null | undefined): string {
+  const v = Number(n);
+  if (!Number.isFinite(v)) return "$0.00";
+  return `${v < 0 ? "-" : ""}$${Math.abs(v).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
-function fmtPct(n: number | null | undefined): string {
-  if (n == null || !Number.isFinite(n)) return "0.00%";
-  return `${n >= 0 ? "+" : ""}${n.toFixed(2)}%`;
+function fmtPct(n: number | string | null | undefined): string {
+  const v = Number(n);
+  if (!Number.isFinite(v)) return "0.00%";
+  return `${v >= 0 ? "+" : ""}${v.toFixed(2)}%`;
 }
 
 function fmtTime(ts: number | undefined): string {
@@ -147,8 +149,16 @@ export default function UserAnalyticsPage() {
   // ─── Computed stats ──────────────────────────────────
 
   const getPnl = (p: PolyPositionEntry) => {
-    if (p.cashPnl && Math.abs(p.cashPnl) > 0.001) return p.cashPnl;
-    return (p.currentValue ?? 0) - (p.initialValue ?? 0);
+    const cash = Number(p.cashPnl) || 0;
+    if (Math.abs(cash) > 0.001) return cash;
+    const cv = Number(p.currentValue) || 0;
+    const iv = Number(p.initialValue) || 0;
+    if (Math.abs(cv - iv) > 0.0001) return cv - iv;
+    // Fallback: compute from percentPnl and cost basis
+    const pct = Number(p.percentPnl) || 0;
+    const cost = (Number(p.size) || 0) * (Number(p.avgPrice) || 0);
+    if (Math.abs(pct) > 0.01 && cost > 0) return cost * (pct / 100);
+    return cv - iv;
   };
 
   const stats = useMemo(() => {
@@ -165,13 +175,7 @@ export default function UserAnalyticsPage() {
     if (!positions) return [];
     return positions
       .filter((p) => !!p.title)
-      .map((p) => {
-        // Use cashPnl if available, otherwise compute from currentValue - initialValue
-        const pnl = (p.cashPnl && Math.abs(p.cashPnl) > 0.001)
-          ? p.cashPnl
-          : ((p.currentValue ?? 0) - (p.initialValue ?? 0));
-        return { title: p.title!, pnl };
-      })
+      .map((p) => ({ title: p.title!, pnl: getPnl(p) }))
       .filter((p) => Math.abs(p.pnl) > 0.001)
       .sort((a, b) => Math.abs(b.pnl) - Math.abs(a.pnl))
       .slice(0, 15)
