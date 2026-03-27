@@ -3,27 +3,22 @@
 import useSWR from "swr";
 import { DashboardChrome } from "@/components/dashboard/DashboardChrome";
 import { useAuth } from "@/lib/useAuth";
+import { api2Fetch } from "@/lib/auth-api";
 import { Trophy, TrendingUp, Flame, Crown, Star, Medal, Loader2 } from "lucide-react";
 
-const TOKEN_KEY = "heyanna_token";
-
-const authFetcher = (url: string) =>
-  fetch(url, {
-    headers: {
-      Authorization: `Bearer ${typeof window !== "undefined" ? localStorage.getItem(TOKEN_KEY) : ""}`,
-    },
-  }).then((r) => {
+const authFetcher = (path: string) =>
+  api2Fetch(path).then((r) => {
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     return r.json();
   });
 
-const publicFetcher = (url: string) =>
-  fetch(url).then((r) => {
+const publicFetcher = (path: string) =>
+  fetch(`${process.env.NEXT_PUBLIC_API_URL}${path}`).then((r) => {
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     return r.json();
   });
 
-type LeaderboardEntry = { rank: number; userId: string; username: string | null; xp: number; referralCount: number };
+type LeaderboardEntry = { rank: number; userId?: string; user_id?: string; username: string | null; xp: number; referralCount?: number; referral_count?: number };
 
 const placeholderRows = [
   { rank: 1, name: "crypto_whale_9f", xp: "48,200", refs: "34", vol: "$1.2M" },
@@ -48,18 +43,18 @@ export default function LeaderboardPage() {
   const { hasSessionToken } = useAuth();
 
   const { data: lbData, isLoading: lbLoading } = useSWR(
-    "/api/referral/leaderboard",
+    "/xp/stats",
     publicFetcher,
     { revalidateOnFocus: false, shouldRetryOnError: false }
   );
 
   const { data: statsData, isLoading: statsLoading } = useSWR(
-    hasSessionToken ? "/api/referral/stats" : null,
+    hasSessionToken ? "/me/xp" : null,
     authFetcher,
     { revalidateOnFocus: false, shouldRetryOnError: false }
   );
 
-  const leaderboard = lbData?.leaderboard as LeaderboardEntry[] | undefined;
+  const leaderboard = (lbData?.leaderboard ?? lbData?.top_users ?? lbData) as LeaderboardEntry[] | undefined;
   const hasLeaderboard = Array.isArray(leaderboard) && leaderboard.length > 0;
   const hasStats = !!statsData && typeof statsData.xp === "number";
 
@@ -106,7 +101,7 @@ export default function LeaderboardPage() {
                   <p.icon className={`w-6 h-6 ${p.color} ${isFirst ? "w-8 h-8" : ""}`} />
                   <p className={`text-xs font-mono ${p.color} mt-2`}>{p.place}</p>
                   <p className={`text-xs font-mono text-muted mt-1.5 ${!isReal ? "blur-[3px] select-none" : ""}`}>
-                    {isReal ? (lbEntry!.username || `User #${lbEntry!.userId}`) : placeholderRow.name}
+                    {isReal ? (lbEntry!.username || `User #${lbEntry!.userId ?? lbEntry!.user_id}`) : placeholderRow.name}
                   </p>
                   <p className={`text-sm font-bold font-mono ${p.color} mt-1 ${!isReal ? "blur-[3px] select-none" : ""}`}>
                     {isReal ? `${lbEntry!.xp.toLocaleString()} XP` : `${placeholderRow.xp} XP`}
@@ -161,9 +156,9 @@ export default function LeaderboardPage() {
                         ? ["\ud83e\udd47", "\ud83e\udd48", "\ud83e\udd49"][(row.rank ?? i + 1) - 1]
                         : <span className="text-muted">{row.rank ?? i + 1}</span>}
                     </span>
-                    <span className="text-xs font-mono text-muted">{row.username || `User #${row.userId}`}</span>
+                    <span className="text-xs font-mono text-muted">{row.username || `User #${row.userId ?? row.user_id}`}</span>
                     <span className="text-xs font-mono text-muted text-right">{row.xp.toLocaleString()}</span>
-                    <span className="text-xs font-mono text-muted text-right">{row.referralCount}</span>
+                    <span className="text-xs font-mono text-muted text-right">{row.referralCount ?? row.referral_count ?? 0}</span>
                   </div>
                 ))
               : placeholderRows.map((row) => (
@@ -193,7 +188,7 @@ export default function LeaderboardPage() {
                 <p className="text-xs font-semibold">Your Position</p>
                 <p className="text-[10px] text-muted mt-0.5">
                   {hasStats
-                    ? `${statsData.xp.toLocaleString()} XP \u00b7 ${statsData.referralCount} referrals`
+                    ? `${statsData.xp.toLocaleString()} XP \u00b7 ${statsData.referrals_made ?? statsData.referralCount ?? 0} referrals`
                     : "Start referring friends to climb the leaderboard"}
                 </p>
               </div>

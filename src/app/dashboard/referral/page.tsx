@@ -4,22 +4,17 @@ import { useState } from "react";
 import useSWR from "swr";
 import { DashboardChrome } from "@/components/dashboard/DashboardChrome";
 import { useAuth } from "@/lib/useAuth";
+import { api2Fetch } from "@/lib/auth-api";
 import { Gift, Trophy, Star, Users, Copy, Share2, Lock, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 
-const TOKEN_KEY = "heyanna_token";
-
-const authFetcher = (url: string) =>
-  fetch(url, {
-    headers: {
-      Authorization: `Bearer ${typeof window !== "undefined" ? localStorage.getItem(TOKEN_KEY) : ""}`,
-    },
-  }).then((r) => {
+const authFetcher = (path: string) =>
+  api2Fetch(path).then((r) => {
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     return r.json();
   });
 
-const publicFetcher = (url: string) =>
-  fetch(url).then((r) => {
+const publicFetcher = (path: string) =>
+  fetch(`${process.env.NEXT_PUBLIC_API_URL}${path}`).then((r) => {
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     return r.json();
   });
@@ -36,28 +31,30 @@ const mockLeaderboard = [
 export default function ReferralPage() {
   const { isAuthenticated, hasSessionToken } = useAuth();
 
-  const { data: codeData, isLoading: codeLoading } = useSWR(
-    hasSessionToken ? "/api/referral/my-code" : null,
+  const { data: codesData, isLoading: codeLoading } = useSWR(
+    hasSessionToken ? "/referral/codes" : null,
     authFetcher,
     { revalidateOnFocus: false, shouldRetryOnError: false }
   );
 
   const { data: statsData, isLoading: statsLoading } = useSWR(
-    hasSessionToken ? "/api/referral/stats" : null,
+    hasSessionToken ? "/me/xp" : null,
     authFetcher,
     { revalidateOnFocus: false, shouldRetryOnError: false }
   );
 
   const { data: lbData, isLoading: lbLoading } = useSWR(
-    "/api/referral/leaderboard",
+    "/xp/stats",
     publicFetcher,
     { revalidateOnFocus: false, shouldRetryOnError: false }
   );
 
-  const referralCode = codeData?.code || statsData?.referralCode || "";
+  // Extract referral code from codes list (first unused code, or first code)
+  const codes = Array.isArray(codesData) ? codesData : codesData?.codes ?? [];
+  const referralCode = codes.length > 0 ? (codes.find((c: { code: string; isUsed?: boolean }) => !c.isUsed)?.code ?? codes[0]?.code ?? "") : "";
   const hasCode = !!referralCode;
   const hasStats = !!statsData && typeof statsData.xp === "number";
-  const leaderboard = lbData?.leaderboard as { rank: number; userId: string; username: string | null; xp: number; referralCount: number }[] | undefined;
+  const leaderboard = (lbData?.leaderboard ?? lbData?.top_users ?? lbData) as { rank: number; userId?: string; user_id?: string; username: string | null; xp: number; referralCount?: number; referral_count?: number }[] | undefined;
   const hasLeaderboard = Array.isArray(leaderboard) && leaderboard.length > 0;
 
   const [copied, setCopied] = useState(false);
@@ -88,18 +85,17 @@ export default function ReferralPage() {
     setClaimLoading(true);
     setClaimResult(null);
     try {
-      const token = typeof window !== "undefined" ? localStorage.getItem(TOKEN_KEY) : "";
-      const res = await fetch("/api/referral/claim", {
+      const res = await api2Fetch("/me/onboard", undefined, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ code: claimCode.trim() }),
+        body: JSON.stringify({ invite_code: claimCode.trim() }),
       });
-      const data = await res.json();
-      setClaimResult({ success: !!data.success, message: data.message || (data.success ? "Code claimed successfully!" : "Failed to claim code.") });
-      if (data.success) setClaimCode("");
+      if (res.ok) {
+        setClaimResult({ success: true, message: "Code claimed successfully!" });
+        setClaimCode("");
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setClaimResult({ success: false, message: data.detail || data.message || "Failed to claim code." });
+      }
     } catch {
       setClaimResult({ success: false, message: "Something went wrong. Please try again." });
     } finally {
@@ -111,7 +107,7 @@ export default function ReferralPage() {
 
   const stats = [
     { label: "Your XP", value: hasStats ? statsData.xp.toLocaleString() : "\u2014", icon: Star },
-    { label: "Referrals", value: hasStats ? String(statsData.referralCount) : "\u2014", icon: Users },
+    { label: "Referrals", value: hasStats ? String(statsData.referrals_made ?? statsData.referralCount ?? 0) : "\u2014", icon: Users },
     { label: "Your Rank", value: hasStats ? `#${statsData.rank}` : "\u2014", icon: Trophy },
     { label: "Rewards", value: "\u2014", icon: Gift },
   ];
@@ -259,7 +255,7 @@ export default function ReferralPage() {
                             ? ["\ud83e\udd47", "\ud83e\udd48", "\ud83e\udd49"][(entry.rank ?? i + 1) - 1]
                             : `${entry.rank ?? i + 1}`}
                         </span>
-                        <span className="text-xs text-muted font-mono">{entry.username || `User #${entry.userId}`}</span>
+                        <span className="text-xs text-muted font-mono">{entry.username || `User #${entry.userId ?? entry.user_id}`}</span>
                         <span className="text-xs text-muted font-mono text-right">{entry.xp.toLocaleString()}</span>
                       </div>
                     ))
