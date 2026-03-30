@@ -253,7 +253,7 @@ function NotificationToast({ notif, onDismiss }: { notif: CopyNotification; onDi
   const label = isSuccess ? "Trade executed" : isFailed ? "Trade failed" : isSignal ? "Signal received" : "Notification";
 
   return (
-    <div className={`flex items-start gap-3 px-4 py-3 rounded-xl border shadow-xl backdrop-blur-sm w-72 ${accentClass}`}
+    <div className={`flex items-start gap-3 px-4 py-3 rounded-xl border shadow-xl backdrop-blur-sm w-full sm:w-72 ${accentClass}`}
       style={{ animation: "slideInRight 0.2s ease-out" }}
     >
       <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${dotClass}`} />
@@ -659,7 +659,7 @@ export function DashboardChrome({ title, children }: DashboardChromeProps) {
       )}
 
       {toasts.length > 0 && typeof document !== "undefined" && createPortal(
-        <div className="fixed top-4 right-4 z-99999 flex flex-col gap-2 pointer-events-none">
+        <div className="fixed top-4 left-4 right-4 sm:left-auto z-99999 flex flex-col gap-2 pointer-events-none">
           {toasts.map(t => (
             <div key={t.id} className="pointer-events-auto">
               <NotificationToast

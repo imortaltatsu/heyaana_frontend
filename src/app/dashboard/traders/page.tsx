@@ -92,7 +92,7 @@ function TraderCard({ trader, isFollowing, isPending, onFollow }: {
   const profileHref = `/dashboard/traders/${trader.username}?roi=${trader.roi.toFixed(2)}&profit=${trader.profit.toFixed(2)}&tradeCount=${trader.tradeCount}&winRate=${trader.winRate.toFixed(2)}${trader.wallet ? `&wallet=${encodeURIComponent(trader.wallet)}` : ""}`;
 
   return (
-    <div className="flex items-center gap-4 px-5 py-4 border-b border-border/30 last:border-0 hover:bg-surface/40 transition-all">
+    <div className="flex items-center gap-3 px-3 py-3 sm:gap-4 sm:px-5 sm:py-4 border-b border-border/30 last:border-0 hover:bg-surface/40 transition-all">
       <Link href={profileHref} className="relative shrink-0">
         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-primary/30 to-purple-500/20 border border-border flex items-center justify-center text-sm font-bold">
           {initials}

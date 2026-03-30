@@ -27,7 +27,7 @@ type Trade = {
 
 function WidgetSkeleton() {
   return (
-    <div className="dashboard-card p-3 min-w-[200px] max-w-[280px] shrink-0 animate-pulse">
+    <div className="dashboard-card p-3 animate-pulse">
       <div className="h-3 w-16 bg-white/10 rounded mb-3" />
       <div className="h-5 w-24 bg-white/10 rounded mb-2" />
       <div className="h-3 w-20 bg-white/[0.06] rounded" />
@@ -83,12 +83,12 @@ function DashboardWidgets() {
   const topEvent = trendingEvents?.[0] ?? null;
 
   return (
-    <div className="flex gap-3 overflow-x-auto pb-2 px-3 pt-3 scrollbar-none">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 px-3 pt-3">
       {/* Widget 1: Quick Portfolio Summary */}
       {portfolioLoading ? (
         <WidgetSkeleton />
       ) : (
-        <div className="dashboard-card p-3 min-w-[200px] max-w-[280px] shrink-0">
+        <div className="dashboard-card p-3">
           <div className="flex items-center gap-1.5 mb-2">
             <Wallet className="w-3.5 h-3.5 text-blue-primary" />
             <span className="text-[11px] font-semibold text-muted uppercase tracking-wide">Portfolio</span>
@@ -107,7 +107,7 @@ function DashboardWidgets() {
       {tradesLoading ? (
         <WidgetSkeleton />
       ) : (
-        <div className="dashboard-card p-3 min-w-[200px] max-w-[280px] shrink-0">
+        <div className="dashboard-card p-3">
           <div className="flex items-center gap-1.5 mb-2">
             <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
             <span className="text-[11px] font-semibold text-muted uppercase tracking-wide">Recent Trades</span>
@@ -139,7 +139,7 @@ function DashboardWidgets() {
       {trendingLoading ? (
         <WidgetSkeleton />
       ) : topEvent ? (
-        <div className="dashboard-card p-3 min-w-[200px] max-w-[280px] shrink-0">
+        <div className="dashboard-card p-3">
           <div className="flex items-center gap-1.5 mb-2">
             <Zap className="w-3.5 h-3.5 text-amber-400" />
             <span className="text-[11px] font-semibold text-muted uppercase tracking-wide">Top Market</span>

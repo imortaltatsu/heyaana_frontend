@@ -372,7 +372,7 @@ export function DFlowEventList() {
                                         Market <SortIcon field="title" />
                                     </button>
                                 </th>
-                                <th className="px-4 py-3 font-medium">
+                                <th className="px-4 py-3 font-medium hidden sm:table-cell">
                                     Category
                                 </th>
                                 <th className="px-4 py-3 font-medium">
@@ -386,7 +386,7 @@ export function DFlowEventList() {
                                 <th className="px-4 py-3 font-medium">
                                     Yes / No
                                 </th>
-                                <th className="px-4 py-3 font-medium">
+                                <th className="px-4 py-3 font-medium hidden md:table-cell">
                                     <button
                                         onClick={() => toggleSort("closesAt")}
                                         className="flex items-center gap-1 hover:text-[var(--foreground)] transition-colors"
@@ -394,7 +394,7 @@ export function DFlowEventList() {
                                         Closes <SortIcon field="closesAt" />
                                     </button>
                                 </th>
-                                <th className="px-4 py-3 font-medium">
+                                <th className="px-4 py-3 font-medium hidden md:table-cell">
                                     Status
                                 </th>
                             </tr>
@@ -437,7 +437,7 @@ export function DFlowEventList() {
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-4 py-3">
+                                        <td className="px-4 py-3 hidden sm:table-cell">
                                             <span className="text-[11px] px-2 py-0.5 rounded-full bg-white/[0.05] text-[var(--muted)] capitalize">
                                                 {event.category || "General"}
                                             </span>
@@ -469,7 +469,7 @@ export function DFlowEventList() {
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-4 py-3 text-[12px] text-[var(--muted)]">
+                                        <td className="px-4 py-3 text-[12px] text-[var(--muted)] hidden md:table-cell">
                                             <div className="flex items-center gap-1">
                                                 {ending && (
                                                     <Clock className="w-3 h-3 text-amber-400" />
@@ -481,7 +481,7 @@ export function DFlowEventList() {
                                                     : "–"}
                                             </div>
                                         </td>
-                                        <td className="px-4 py-3">
+                                        <td className="px-4 py-3 hidden md:table-cell">
                                             <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-400/10 text-emerald-400 font-medium">
                                                 {event.status}
                                             </span>

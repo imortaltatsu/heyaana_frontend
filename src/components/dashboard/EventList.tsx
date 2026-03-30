@@ -627,7 +627,7 @@ export function EventList() {
                                         className="border-b border-border/30 last:border-0 hover:bg-surface/50 cursor-pointer transition-colors group"
                                     >
                                         <td className="px-4 py-2">
-                                            <p className="text-sm font-semibold truncate max-w-[300px] group-hover:text-blue-primary transition-colors">
+                                            <p className="text-sm font-semibold truncate max-w-[180px] sm:max-w-[300px] group-hover:text-blue-primary transition-colors">
                                                 {event.title}
                                             </p>
                                         </td>
