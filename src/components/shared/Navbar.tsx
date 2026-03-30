@@ -73,6 +73,12 @@ export function Navbar() {
                 {link.label}
               </button>
             ))}
+            <Link
+              href="/docs"
+              className="text-sm text-white/50 hover:text-white px-4 py-1.5 rounded-full hover:bg-white/5 transition-all"
+            >
+              Docs
+            </Link>
             <a
               href="https://x.com/tryheyanna"
               target="_blank"
@@ -129,6 +135,7 @@ export function Navbar() {
                 {link.label}
               </button>
             ))}
+            <Link href="/docs" className="block text-sm text-white/60 hover:text-white px-2 py-1" onClick={() => setMobileOpen(false)}>Docs</Link>
             <a href="https://x.com/tryheyanna" target="_blank" rel="noopener noreferrer" className="block text-sm text-white/60 hover:text-white px-2 py-1" onClick={() => setMobileOpen(false)}>Twitter / X</a>
             <div className="flex flex-col gap-2 pt-2">
               <a

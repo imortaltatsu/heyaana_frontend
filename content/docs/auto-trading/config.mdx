@@ -1,0 +1,46 @@
+---
+title: Configuring Signals
+description: How to set up and configure auto-trading signals on HeyAana.
+---
+
+# Configuring Signals
+
+All auto-trading configuration lives on the **Auto Trade** page (`/dashboard/auto-trade`).
+
+## Enabling signals
+
+<Steps>
+  <Step number={1} title="Navigate to Auto Trade">
+    Go to `/dashboard/auto-trade` from the sidebar.
+  </Step>
+  <Step number={2} title="Toggle signal timeframes">
+    Enable or disable each timeframe independently -- 5-minute and 15-minute signals each have their own toggle.
+  </Step>
+  <Step number={3} title="Set share size">
+    Choose how many shares to buy per signal, from 5 to 1,000 shares. Set this per timeframe.
+  </Step>
+</Steps>
+
+Active signals show a **live status indicator** so you always know what is running.
+
+<Callout type="tip">
+  Start with a small share size (5-10) while you learn how the signals perform. You can increase later.
+</Callout>
+
+## Execution history
+
+The Auto Trade page includes a full history of every signal execution. Each entry shows:
+
+- **Market title** -- which market the trade was placed in
+- **Asset** -- the specific asset traded
+- **Direction** -- UP or DOWN
+- **Side** -- BUY or SELL
+- **Amount** -- number of shares
+- **Status** -- whether the trade succeeded or failed
+- **Signal time** -- when the signal was generated
+- **Execution time** -- when the trade actually executed
+- **Transaction hash** -- on-chain proof of the trade
+
+<Callout type="info">
+  Use the execution history to evaluate signal quality over time and adjust your configuration accordingly.
+</Callout>
