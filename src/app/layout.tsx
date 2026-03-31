@@ -34,7 +34,7 @@ const DESCRIPTION =
 
 export const metadata: Metadata = {
   other: {
-    "base:app_id": "69cbef1f6a64caf44d485367",
+    "base:app_id": "69cc318f6a64caf44d4853ac",
   },
   metadataBase: new URL(SITE_URL),
   alternates: {
