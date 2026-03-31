@@ -33,6 +33,9 @@ const DESCRIPTION =
   "Own the market before it owns you. We track the chaos — you take the position. Global data, cross-venue intelligence, and AI that's already ahead.";
 
 export const metadata: Metadata = {
+  other: {
+    "base:app_id": "69cbef1f6a64caf44d485367",
+  },
   metadataBase: new URL(SITE_URL),
   alternates: {
     canonical: CANONICAL_HOME,
