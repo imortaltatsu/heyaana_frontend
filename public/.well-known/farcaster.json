@@ -1,0 +1,15 @@
+{
+  "accountAssociation": {
+    "header": "",
+    "payload": "",
+    "signature": ""
+  },
+  "miniapp": {
+    "version": "1",
+    "name": "HeyAnna",
+    "iconUrl": "https://www.heyanna.trade/heyannalogo.png",
+    "homeUrl": "https://www.heyanna.trade/",
+    "subtitle": "Trade Before The Crowd.",
+    "description": "HeyAnna is a web app for prediction markets - think a dashboard/terminal where you can follow markets"
+  }
+}
