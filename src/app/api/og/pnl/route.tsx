@@ -37,6 +37,40 @@ async function getHeyAnnaLogoDataUri(): Promise<string | null> {
   }
 }
 
+/** Sticker overlays: stick1 = profit, stick2 = loss. Cached per-process. */
+const STICKER_H = 620;
+
+let cachedStick1DataUri: string | null | undefined;
+let cachedStick2DataUri: string | null | undefined;
+
+async function getStickerDataUri(
+  variant: "stick1" | "stick2",
+): Promise<string | null> {
+  const cached = variant === "stick1" ? cachedStick1DataUri : cachedStick2DataUri;
+  if (cached !== undefined) return cached;
+  const filePath = join(process.cwd(), "public", `${variant}.png`);
+  if (!existsSync(filePath)) {
+    if (variant === "stick1") cachedStick1DataUri = null;
+    else cachedStick2DataUri = null;
+    return null;
+  }
+  try {
+    const sharp = (await import("sharp")).default;
+    const buf = await sharp(filePath)
+      .resize({ height: STICKER_H, fit: "inside", kernel: sharp.kernel.nearest })
+      .png({ compressionLevel: 9 })
+      .toBuffer();
+    const uri = `data:image/png;base64,${buf.toString("base64")}`;
+    if (variant === "stick1") cachedStick1DataUri = uri;
+    else cachedStick2DataUri = uri;
+    return uri;
+  } catch {
+    if (variant === "stick1") cachedStick1DataUri = null;
+    else cachedStick2DataUri = null;
+    return null;
+  }
+}
+
 let cachedHeyBannerDataUri: string | null | undefined;
 
 /** Full-bleed backdrop from `public/heybanner.png` (scaled to OG size). */
@@ -142,9 +176,11 @@ function parsePnlPct(raw: string | null): number | null {
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const assetOrigin = `${requestUrl.protocol}//${requestUrl.host}`;
-  const [logoDataUri, bannerSrc] = await Promise.all([
+  const [logoDataUri, bannerSrc, stick1Src, stick2Src] = await Promise.all([
     getHeyAnnaLogoDataUri(),
     getHeyBannerDataUri(),
+    getStickerDataUri("stick1"),
+    getStickerDataUri("stick2"),
   ]);
   const brandLogoSrc = logoDataUri ?? `${assetOrigin}/heyannalogo.png`;
 
@@ -225,6 +261,28 @@ export async function GET(request: Request) {
             }}
           />
         ) : null}
+        {/* Sticker overlay: stick1 for profit, stick2 for loss */}
+        {(() => {
+          const stickerSrc = isProfit ? stick1Src : stick2Src;
+          if (!stickerSrc) return null;
+          return (
+            // eslint-disable-next-line @next/next/no-img-element -- OG ImageResponse runtime
+            <img
+              src={stickerSrc}
+              alt=""
+              height={STICKER_H}
+              style={{
+                position: "absolute",
+                right: 20,
+                bottom: 0,
+                height: STICKER_H,
+                opacity: 0.37,
+                objectFit: "contain",
+                imageRendering: "pixelated",
+              }}
+            />
+          );
+        })()}
         <div
           style={{
             position: "relative",
