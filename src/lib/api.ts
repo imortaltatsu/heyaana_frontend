@@ -1184,6 +1184,37 @@ export async function analyzeMarket(query: string): Promise<MarketAnalysis> {
     return data as MarketAnalysis;
 }
 
+// ─── Agent credits (MetEngine + ELSA) ─────────────────────
+
+export type CreditBalances = { metengine: number; elsa: number };
+
+export async function fetchCreditBalances(): Promise<CreditBalances> {
+    const token = typeof window !== "undefined" ? localStorage.getItem(TOKEN_STORAGE_KEY) : null;
+    const res = await fetch("/api/credits/balance", {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    if (!res.ok) throw new Error("Failed to fetch credit balances");
+    return res.json();
+}
+
+export async function topUpCredits(
+    service: "metengine" | "elsa",
+    pack: string,
+): Promise<{ new_balance: number; credits_added: number; amount_charged: number }> {
+    const token = typeof window !== "undefined" ? localStorage.getItem(TOKEN_STORAGE_KEY) : null;
+    const res = await fetch("/api/credits/topup", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ service, pack }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error ?? "Top-up failed");
+    return data;
+}
+
 // ─── API helper functions ─────────────────────────────────
 
 export async function refreshCache(): Promise<Record<string, string>> {

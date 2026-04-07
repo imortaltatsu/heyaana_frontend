@@ -572,6 +572,9 @@ export default function ProfilePage() {
                   <UserBadge />
                 </div>
                 <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                  <span className="text-[9px] font-semibold text-blue-400 px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 uppercase tracking-wide">
+                    EOA Wallet
+                  </span>
                   <span className="text-xs font-mono text-muted truncate max-w-[240px]">
                     {isLoading ? "Loading…" : (walletAddress ? `${walletAddress.slice(0, 6)}…${walletAddress.slice(-4)}` : "No wallet")}
                   </span>

@@ -18,6 +18,7 @@ import {
   Star,
   Layers,
   BarChart2,
+  Bot,
 } from "lucide-react";
 
 const mobileNavItems = [
@@ -29,6 +30,7 @@ const mobileNavItems = [
   { href: "/dashboard/social", icon: TrendingUp, label: "Trades" },
   { href: "/dashboard/traders", icon: Users, label: "Traders" },
   { href: "/dashboard/leaderboard", icon: Trophy, label: "Board" },
+  { href: "/dashboard/metengine", icon: Bot, label: "MetEngine" },
   { href: "/dashboard/referral", icon: Gift, label: "Referral" },
   { href: "/dashboard/profile", icon: Settings, label: "Profile" },
 ];

@@ -28,6 +28,7 @@ import {
   Zap,
   Layers,
   Trophy,
+  Bot,
 } from "lucide-react";
 import { UserBadge } from "@/components/dashboard/WalletConnect";
 import { MobileTopBar, MobileBottomNav } from "@/components/dashboard/Sidebar";
@@ -52,6 +53,7 @@ const navItems = [
   { icon: Activity, label: "Markets", href: "/dashboard/markets" },
   { icon: Layers, label: "Kalshi", href: "/dashboard/kalshi-markets" },
   { icon: Star, label: "Watchlist", href: "/dashboard/watchlist" },
+  { icon: Bot, label: "MetEngine", href: "/dashboard/metengine" },
   { icon: Zap, label: "Auto Trade", href: "/dashboard/auto-trade" },
   { icon: TrendingUp, label: "Trades", href: "/dashboard/social" },
   { icon: Users, label: "Traders", href: "/dashboard/traders" },
@@ -420,7 +422,7 @@ export function DashboardChrome({ title, children }: DashboardChromeProps) {
           <div className="text-[10px] font-medium text-muted uppercase tracking-widest mb-3 px-3">
             Trading
           </div>
-          {navItems.slice(0, 7).map((item) => {
+          {navItems.slice(0, 8).map((item) => {
             const active = isItemActive(pathname, item.href);
             return (
               <Link
@@ -448,7 +450,7 @@ export function DashboardChrome({ title, children }: DashboardChromeProps) {
           <div className="text-[10px] font-medium text-muted uppercase tracking-widest mb-3 px-3 pt-6">
             Account
           </div>
-          {navItems.slice(7).map((item) => {
+          {navItems.slice(8).map((item) => {
             const active = isItemActive(pathname, item.href);
             return (
               <Link

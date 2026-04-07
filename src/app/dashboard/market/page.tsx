@@ -11,7 +11,8 @@ import { LimitOrderPanel } from "@/components/dashboard/market/LimitOrderPanel";
 import { PositionCalculator } from "@/components/dashboard/market/PositionCalculator";
 import { PositionCard } from "@/components/dashboard/market/PositionCard";
 import { MarketTabs } from "@/components/dashboard/market/MarketTabs";
-import { fetcher, formatVolume, Market, normalizeMarket, Trade, analyzeMarket, MarketAnalysis } from "@/lib/api";
+import { fetcher, formatVolume, Market, normalizeMarket, Trade, analyzeMarket, MarketAnalysis, fetchCreditBalances } from "@/lib/api";
+import { TopUpModal } from "@/components/dashboard/TopUpModal";
 import { parseMarketTitle } from "@/lib/market-title";
 import {
   ChevronLeft,
@@ -101,14 +102,36 @@ function MarketDetailContent() {
   }, [copied]);
 
   const [paymentError, setPaymentError] = useState<{ message: string; fee?: string; chain?: string } | null>(null);
+  const [showElsaTopUp, setShowElsaTopUp] = useState(false);
+
+  // ELSA credit balance
+  const { data: creditBalances, mutate: refreshCredits } = useSWR(
+    "credit-balances",
+    fetchCreditBalances,
+    { refreshInterval: 30000 },
+  );
+  const elsaBalance = creditBalances?.elsa ?? 0;
 
   async function handleAnalyze(query: string) {
+    // Check ELSA credits first
+    if (elsaBalance < 0.10) {
+      setShowElsaTopUp(true);
+      return;
+    }
+
     setAnalysisLoading(true);
     setAnalysisError(null);
     setPaymentError(null);
     try {
       const result = await analyzeMarket(query);
       setAnalysis(result);
+      // Debit ELSA credits after successful analysis
+      await fetch("/api/credits/debit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: "self", service: "elsa", amount: 0.10, description: "AI market analysis" }),
+      });
+      refreshCredits();
     } catch (err: any) {
       if (err?.code === "PAYMENT_REQUIRED") {
         setPaymentError({ message: err.message, fee: err.fee, chain: err.chain });
@@ -419,12 +442,17 @@ function MarketDetailContent() {
                     AI Analysis
                   </div>
                   {!analysis && !analysisLoading && (
-                    <button
-                      onClick={() => { setPaymentError(null); handleAnalyze(market.title); }}
-                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-blue-500/30 text-blue-400 hover:bg-blue-500/10 transition-all"
-                    >
-                      <Sparkles className="w-3 h-3" /> Analyze &middot; $0.10
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[9px] font-mono text-emerald-400/70">
+                        ${elsaBalance.toFixed(2)}
+                      </span>
+                      <button
+                        onClick={() => { setPaymentError(null); handleAnalyze(market.title); }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-blue-500/30 text-blue-400 hover:bg-blue-500/10 transition-all"
+                      >
+                        <Sparkles className="w-3 h-3" /> Analyze &middot; $0.10
+                      </button>
+                    </div>
                   )}
                   {analysis && !analysisLoading && (
                     <button
@@ -541,6 +569,13 @@ function MarketDetailContent() {
           </div>
         </div>
       </div>
+      {showElsaTopUp && (
+        <TopUpModal
+          service="elsa"
+          onClose={() => setShowElsaTopUp(false)}
+          onSuccess={() => refreshCredits()}
+        />
+      )}
     </DashboardChrome>
   );
 }
