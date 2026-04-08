@@ -32,9 +32,29 @@ export async function POST(request: NextRequest) {
   try {
     const sql = getSql();
 
-    // TODO: Integrate with API2 backend to transfer pack.price USDC
-    // from user's Polygon EOA to PLATFORM_REVENUE_ADDRESS.
-    // For now, credits are granted directly (backend payment integration TBD).
+    // Charge USDC.e from user's EOA via the API2 backend
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const authHeader = request.headers.get("authorization");
+    if (!apiUrl || !authHeader) {
+      return NextResponse.json({ error: "Missing API configuration" }, { status: 500 });
+    }
+
+    const chargeRes = await fetch(`${apiUrl}/me/credits/charge`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authHeader,
+      },
+      body: JSON.stringify({ amount: pack.price }),
+    });
+
+    if (!chargeRes.ok) {
+      const chargeErr = await chargeRes.json().catch(() => ({}));
+      const errMsg = (chargeErr as { error?: string; message?: string }).error
+        ?? (chargeErr as { error?: string; message?: string }).message
+        ?? "Payment failed — make sure your EOA has enough USDC.e and POL for gas";
+      return NextResponse.json({ error: errMsg }, { status: 402 });
+    }
 
     // Upsert credit balance
     await sql`
