@@ -39,7 +39,9 @@ export function TopUpModal({ service, onClose, onSuccess }: TopUpModalProps) {
       setSuccess({ balance: res.new_balance, credits: res.credits_added });
       onSuccess?.(res.new_balance);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Top-up failed");
+      const msg = err instanceof Error ? err.message : "Top-up failed";
+      console.error("[TopUpModal] error:", msg);
+      setError(msg);
     } finally {
       setLoading(false);
     }

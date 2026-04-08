@@ -48,11 +48,13 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({ amount: pack.price }),
     });
 
+    const chargeBody = await chargeRes.json().catch(() => null);
+    console.log("[credits/topup] charge response:", chargeRes.status, JSON.stringify(chargeBody));
+
     if (!chargeRes.ok) {
-      const chargeErr = await chargeRes.json().catch(() => ({}));
-      const errMsg = (chargeErr as { error?: string; message?: string }).error
-        ?? (chargeErr as { error?: string; message?: string }).message
-        ?? "Payment failed — make sure your EOA has enough USDC.e and POL for gas";
+      const errObj = chargeBody as { error?: string; message?: string; detail?: string } | null;
+      const errMsg = errObj?.error ?? errObj?.message ?? errObj?.detail
+        ?? `Payment failed (${chargeRes.status}) — make sure your EOA has enough USDC.e and POL for gas`;
       return NextResponse.json({ error: errMsg }, { status: 402 });
     }
 
