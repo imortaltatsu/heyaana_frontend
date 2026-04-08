@@ -132,8 +132,8 @@ export default function TradesPage() {
           {followError && <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-mono"><AlertCircle className="w-4 h-4 shrink-0" />{followError}</div>}
 
           {tab === "copy" ? <CopyTrading /> : (
-            <div className="dashboard-card overflow-hidden">
-              <div className="grid grid-cols-[1fr_80px_80px_80px] md:grid-cols-[minmax(140px,1fr)_1fr_90px_90px_110px_100px_90px] gap-3 px-4 py-2.5 text-[10px] font-mono text-muted uppercase tracking-wider border-b border-border/50">
+            <div className="dashboard-card overflow-x-auto">
+              <div className="min-w-[380px] grid grid-cols-[1fr_80px_80px_80px] md:min-w-0 md:grid-cols-[minmax(140px,1fr)_1fr_90px_90px_110px_100px_90px] gap-3 px-4 py-2.5 text-[10px] font-mono text-muted uppercase tracking-wider border-b border-border/50">
                 <span>Trader</span><span className="hidden md:block">Market</span><span className="text-center">Side</span><span className="text-right">Amount</span><span className="text-right hidden md:block">PnL</span><span className="text-center hidden md:block">Status</span><span className="text-right">Time</span>
               </div>
               {isLoading ? (
@@ -154,7 +154,7 @@ export default function TradesPage() {
                 const displayName = trade.first_name ?? trade.username ?? `User #${trade.user_id}`;
                 const profileHref = trade.username ? `/dashboard/traders/${trade.username}` : null;
                 return (
-                  <div key={`${trade.user_id}-${trade.executed_at}-${i}`} className="grid grid-cols-[1fr_80px_80px_80px] md:grid-cols-[minmax(140px,1fr)_1fr_90px_90px_110px_100px_90px] gap-3 items-center px-4 py-3 border-b border-border/30 hover:bg-surface/60 transition-all">
+                  <div key={`${trade.user_id}-${trade.executed_at}-${i}`} className="min-w-[380px] md:min-w-0 grid grid-cols-[1fr_80px_80px_80px] md:grid-cols-[minmax(140px,1fr)_1fr_90px_90px_110px_100px_90px] gap-3 items-center px-4 py-3 border-b border-border/30 hover:bg-surface/60 transition-all">
                     <div className="flex items-center gap-2.5 min-w-0">
                       {profileHref ? (
                         <Link href={profileHref} className="avatar avatar-sm shrink-0 hover:opacity-80 text-[10px]">{displayName.slice(0, 2).toUpperCase()}</Link>

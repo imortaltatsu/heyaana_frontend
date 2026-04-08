@@ -214,8 +214,8 @@ export default function ReferralPage() {
               </div>
 
               {codes.length > 0 ? (
-                <div className="rounded-lg border border-border/30 overflow-hidden">
-                  <div className="grid grid-cols-[1fr_80px_100px_36px] px-3 py-2 bg-white/[0.02] text-[9px] font-mono text-muted uppercase tracking-wider border-b border-border/20">
+                <div className="rounded-lg border border-border/30 overflow-x-auto">
+                  <div className="min-w-[340px] grid grid-cols-[1fr_80px_100px_36px] px-3 py-2 bg-white/[0.02] text-[9px] font-mono text-muted uppercase tracking-wider border-b border-border/20">
                     <span>Code</span>
                     <span>Status</span>
                     <span>Claimed By</span>
@@ -224,7 +224,7 @@ export default function ReferralPage() {
                   {codes.map((c) => (
                     <div
                       key={c.code}
-                      className="grid grid-cols-[1fr_80px_100px_36px] px-3 py-2.5 border-b border-border/10 last:border-0 items-center"
+                      className="min-w-[340px] grid grid-cols-[1fr_80px_100px_36px] px-3 py-2.5 border-b border-border/10 last:border-0 items-center"
                     >
                       <span className="text-xs font-mono text-foreground">{c.code}</span>
                       <span className={`text-[10px] font-mono ${c.isUsed ? "text-muted/60" : "text-green-400"}`}>

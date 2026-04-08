@@ -19,6 +19,7 @@ import {
   Layers,
   BarChart2,
   Bot,
+  ArrowRightLeft,
 } from "lucide-react";
 
 const mobileNavItems = [
@@ -31,6 +32,7 @@ const mobileNavItems = [
   { href: "/dashboard/traders", icon: Users, label: "Traders" },
   { href: "/dashboard/leaderboard", icon: Trophy, label: "Board" },
   { href: "/dashboard/metengine", icon: Bot, label: "MetEngine" },
+  { href: "/dashboard/actions", icon: ArrowRightLeft, label: "Actions" },
   { href: "/dashboard/referral", icon: Gift, label: "Referral" },
   { href: "/dashboard/profile", icon: Settings, label: "Profile" },
 ];
@@ -40,7 +42,7 @@ export function MobileTopBar() {
 
   return (
     <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-12 border-b border-border bg-[#0A0A0F]/90 backdrop-blur-xl flex items-center justify-between px-4">
-      <Link href="/" className="flex items-center gap-2">
+      <Link href="/dashboard" className="flex items-center gap-2">
         <Image
           src="/heyannalogo.png"
           alt="HeyAnna logo"

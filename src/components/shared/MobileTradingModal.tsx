@@ -54,26 +54,29 @@ export function MobileTradingModal({ isOpen, onClose, onProceed }: MobileTrading
             href={env.TG_BOT_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full px-6 py-3.5 rounded-lg bg-[#26A5E4]/15 border border-[#26A5E4]/30 text-[#26A5E4] font-medium text-sm hover:bg-[#26A5E4]/25 transition-colors"
+            className="flex items-center justify-center gap-2.5 w-full px-6 py-4 rounded-xl bg-[#26A5E4] text-white font-semibold text-sm hover:bg-[#1E95D0] transition-colors shadow-lg shadow-[#26A5E4]/25 ring-2 ring-[#26A5E4]/40"
           >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.17 13.919l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.978.64z" />
             </svg>
             Launch Telegram Bot
+            <span className="text-[10px] font-bold uppercase tracking-wide bg-white/20 px-2 py-0.5 rounded-full">Recommended</span>
           </a>
 
-          <p className="text-xs text-white/40">
-            You can still use the web app on mobile.
-          </p>
+          <div className="flex items-center gap-3 text-white/30">
+            <div className="flex-1 h-px bg-white/10" />
+            <span className="text-[10px] uppercase tracking-wider">or</span>
+            <div className="flex-1 h-px bg-white/10" />
+          </div>
 
           <button
             onClick={() => {
               onClose();
               onProceed();
             }}
-            className="w-full px-6 py-3.5 rounded-lg bg-[#466EFF] text-white font-semibold text-sm hover:bg-[#5A7FFF] transition-colors"
+            className="w-full px-6 py-3 rounded-lg bg-white/5 border border-white/10 text-white/60 font-medium text-sm hover:bg-white/10 hover:text-white/80 transition-colors"
           >
-            Proceed to login
+            Continue on web
           </button>
         </div>
       </div>

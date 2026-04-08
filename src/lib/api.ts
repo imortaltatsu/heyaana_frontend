@@ -1215,6 +1215,21 @@ export async function topUpCredits(
     return data;
 }
 
+export async function chargeCredits(amount: number): Promise<unknown> {
+    const res = await fetch(`${API2_BASE_URL}/me/credits/charge`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+            "Authorization": `Bearer ${typeof window !== "undefined" ? localStorage.getItem(TOKEN_STORAGE_KEY) : ""}`,
+        },
+        body: JSON.stringify({ amount }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error ?? data.message ?? "Credit charge failed");
+    return data;
+}
+
 // ─── API helper functions ─────────────────────────────────
 
 export async function refreshCache(): Promise<Record<string, string>> {

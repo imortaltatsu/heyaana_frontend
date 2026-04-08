@@ -5,9 +5,10 @@ import { useState, useEffect } from "react";
 import { DashboardChrome } from "@/components/dashboard/DashboardChrome";
 import { UserBadge } from "@/components/dashboard/WalletConnect";
 import { useAuth } from "@/lib/useAuth";
-import { proxyFetcher, Portfolio, Position, closePosition, exportPrivateKey, unfollowTrader, followTrader, swapUSDC, withdrawFunds, mergeFollowingWithCache, fetchOrders, cancelOrder, type LimitOrder, type CopyNotification } from "@/lib/api";
+import { proxyFetcher, Portfolio, Position, closePosition, exportPrivateKey, unfollowTrader, followTrader, mergeFollowingWithCache, fetchOrders, cancelOrder, type LimitOrder, type CopyNotification } from "@/lib/api";
 import Link from "next/link";
-import { TrendingUp, TrendingDown, Wallet, BarChart3, Loader2, X, AlertCircle, CheckCircle2, ExternalLink, KeyRound, ShieldAlert, Copy, Eye, EyeOff, Users, UserMinus, ArrowLeftRight, ArrowUpFromLine, Clock, Pencil } from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, BarChart3, Loader2, X, AlertCircle, CheckCircle2, ExternalLink, KeyRound, ShieldAlert, Copy, Eye, EyeOff, Users, UserMinus, ArrowDownToLine, Clock, Pencil } from "lucide-react";
+import { DepositModal } from "@/components/dashboard/DepositModal";
 import { PnlShareButton } from "@/components/dashboard/PnlShareButton";
 import { CopyTradeModal } from "@/components/dashboard/CopyTradeModal";
 
@@ -82,57 +83,6 @@ export default function ProfilePage() {
     }
   }
 
-  // Swap USDC state
-  const [swapAmount, setSwapAmount] = useState("");
-  const [swapAll, setSwapAll] = useState(false);
-  const [swapLoading, setSwapLoading] = useState(false);
-  const [swapResult, setSwapResult] = useState<{ ok: boolean; message: string } | null>(null);
-
-  // Withdraw state
-  const [withdrawAmount, setWithdrawAmount] = useState("");
-  const [withdrawAll, setWithdrawAll] = useState(false);
-  const [withdrawLoading, setWithdrawLoading] = useState(false);
-  const [withdrawResult, setWithdrawResult] = useState<{ ok: boolean; message: string } | null>(null);
-
-  async function handleSwap() {
-    setSwapLoading(true);
-    setSwapResult(null);
-    try {
-      const amount = swapAll ? null : swapAmount ? parseFloat(swapAmount) : null;
-      await swapUSDC(amount);
-      setSwapResult({ ok: true, message: "Swap submitted successfully!" });
-      setSwapAmount("");
-      setSwapAll(false);
-      await Promise.all([mutateBalance(), mutatePortfolio()]);
-    } catch (err) {
-      setSwapResult({ ok: false, message: err instanceof Error ? err.message : "Swap failed" });
-    } finally {
-      setSwapLoading(false);
-    }
-  }
-
-  async function handleWithdraw() {
-    setWithdrawLoading(true);
-    setWithdrawResult(null);
-    try {
-      const amount = withdrawAll ? null : withdrawAmount ? parseFloat(withdrawAmount) : null;
-      if (!withdrawAll && (!amount || amount <= 0)) {
-        setWithdrawResult({ ok: false, message: "Enter a valid amount" });
-        setWithdrawLoading(false);
-        return;
-      }
-      await withdrawFunds(amount);
-      setWithdrawResult({ ok: true, message: withdrawAll ? "Full withdrawal submitted!" : `$${parseFloat(withdrawAmount).toFixed(2)} withdrawal submitted!` });
-      setWithdrawAmount("");
-      setWithdrawAll(false);
-      await Promise.all([mutateBalance(), mutatePortfolio()]);
-    } catch (err) {
-      setWithdrawResult({ ok: false, message: err instanceof Error ? err.message : "Withdrawal failed" });
-    } finally {
-      setWithdrawLoading(false);
-    }
-  }
-
   // Private key export flow: null → 'warning' → 'confirmed' → 'revealed'
   const [pkStep, setPkStep] = useState<null | 'warning' | 'loading' | 'revealed'>(null);
   const [pkValue, setPkValue] = useState<string | null>(null);
@@ -141,6 +91,7 @@ export default function ProfilePage() {
   const [pkCopied, setPkCopied] = useState(false);
   const [pkConfirmed, setPkConfirmed] = useState(false);
   const [walletCopied, setWalletCopied] = useState(false);
+  const [showDeposit, setShowDeposit] = useState(false);
 
   function handleCopyWallet() {
     if (!walletAddress) return;
@@ -589,6 +540,20 @@ export default function ProfilePage() {
                     </button>
                   )}
                 </div>
+                {isAuthenticated && (
+                  <div className="mt-3 space-y-2">
+                    <button
+                      onClick={() => setShowDeposit(true)}
+                      className="flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl bg-blue-primary text-white hover:bg-blue-dark transition-all"
+                    >
+                      <ArrowDownToLine className="w-3.5 h-3.5" />
+                      Deposit to Safe Wallet
+                    </button>
+                    <p className="text-[10px] text-muted leading-relaxed max-w-sm">
+                      Deposit funds into your <span className="text-foreground/80 font-medium">Safe (trading) wallet</span> to start trading on Polymarket. Your EOA is your in-app wallet — it&apos;s not your trading wallet. Only top up EOA to fund x402 API calls. You&apos;ll need some <span className="text-foreground/80 font-medium">POL</span> for gas.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -715,132 +680,6 @@ export default function ProfilePage() {
               </div>
             )}
           </div>
-
-          {/* Swap USDC Card */}
-          {isAuthenticated && (
-            <div className="dashboard-card p-5 md:p-6 space-y-4">
-              <div className="section-header">
-                <ArrowLeftRight className="w-4 h-4 text-blue-primary" />
-                <h3 className="text-sm font-semibold">Swap USDC</h3>
-              </div>
-              <p className="text-xs text-muted leading-relaxed">
-                Convert native USDC.e to bridged USDC on Polygon for trading on Polymarket.
-              </p>
-              <div className="flex items-start gap-2 rounded-lg border border-red-500/20 bg-red-500/5 px-3 py-2.5">
-                <AlertCircle className="w-3.5 h-3.5 text-red-400 shrink-0 mt-0.5" />
-                <p className="text-[11px] leading-relaxed text-red-300/90">
-                  <span className="font-bold text-red-400">EOA wallet only.</span>{" "}
-                  This swap only works for your regular (EOA) wallet. It does <span className="font-bold text-red-400">not</span> work for Safe (multisig) wallets.
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                <label className="flex items-center gap-2 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={swapAll}
-                    onChange={e => { setSwapAll(e.target.checked); if (e.target.checked) setSwapAmount(""); }}
-                    className="w-4 h-4 accent-blue-400"
-                  />
-                  <span className="text-xs font-semibold">Swap full balance</span>
-                </label>
-
-                {!swapAll && (
-                  <div className="relative">
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      placeholder="Amount (e.g. 10.00)"
-                      value={swapAmount}
-                      onChange={e => setSwapAmount(e.target.value)}
-                      className="w-full h-10 pl-3 pr-16 text-sm rounded-xl bg-surface/60 border border-border/70 text-foreground placeholder:text-muted focus:outline-none focus:border-blue-primary/50 focus:ring-2 focus:ring-blue-primary/20 transition-all font-mono"
-                    />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono text-muted">USDC.e</span>
-                  </div>
-                )}
-
-                {swapResult && (
-                  <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-mono ${swapResult.ok ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-red-500/10 text-red-400 border border-red-500/20"}`}>
-                    {swapResult.ok ? <CheckCircle2 className="w-3.5 h-3.5 shrink-0" /> : <AlertCircle className="w-3.5 h-3.5 shrink-0" />}
-                    {swapResult.message}
-                  </div>
-                )}
-
-                <button
-                  onClick={handleSwap}
-                  disabled={swapLoading || (!swapAll && !swapAmount)}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-xl border border-blue-500/30 text-blue-400 hover:bg-blue-500/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {swapLoading ? (
-                    <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Swapping…</>
-                  ) : (
-                    <><ArrowLeftRight className="w-3.5 h-3.5" /> {swapAll ? "Swap All USDC.e" : "Swap USDC.e"}</>
-                  )}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Withdraw Card */}
-          {isAuthenticated && (
-            <div className="dashboard-card p-5 md:p-6 space-y-4">
-              <div className="section-header">
-                <ArrowUpFromLine className="w-4 h-4 text-blue-primary" />
-                <h3 className="text-sm font-semibold">Withdraw</h3>
-              </div>
-              <p className="text-xs text-muted leading-relaxed">
-                Transfer USDC.e from your Safe trading wallet back to your EOA.
-              </p>
-
-              <div className="space-y-3">
-                <label className="flex items-center gap-2 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={withdrawAll}
-                    onChange={e => { setWithdrawAll(e.target.checked); if (e.target.checked) setWithdrawAmount(""); }}
-                    className="w-4 h-4 accent-blue-400"
-                  />
-                  <span className="text-xs font-semibold">Withdraw full balance</span>
-                </label>
-
-                {!withdrawAll && (
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted text-sm">$</span>
-                    <input
-                      type="number"
-                      min="0.01"
-                      step="0.01"
-                      placeholder="Amount (e.g. 10.00)"
-                      value={withdrawAmount}
-                      onChange={e => setWithdrawAmount(e.target.value)}
-                      className="w-full h-10 pl-7 pr-16 text-sm rounded-xl bg-surface/60 border border-border/70 text-foreground placeholder:text-muted focus:outline-none focus:border-blue-primary/50 focus:ring-2 focus:ring-blue-primary/20 transition-all font-mono"
-                    />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono text-muted">USDC.e</span>
-                  </div>
-                )}
-
-                {withdrawResult && (
-                  <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-mono ${withdrawResult.ok ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-red-500/10 text-red-400 border border-red-500/20"}`}>
-                    {withdrawResult.ok ? <CheckCircle2 className="w-3.5 h-3.5 shrink-0" /> : <AlertCircle className="w-3.5 h-3.5 shrink-0" />}
-                    {withdrawResult.message}
-                  </div>
-                )}
-
-                <button
-                  onClick={handleWithdraw}
-                  disabled={withdrawLoading || (!withdrawAll && !withdrawAmount)}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-xl border border-blue-500/30 text-blue-400 hover:bg-blue-500/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {withdrawLoading ? (
-                    <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Withdrawing…</>
-                  ) : (
-                    <><ArrowUpFromLine className="w-3.5 h-3.5" /> {withdrawAll ? "Withdraw All" : "Withdraw"}</>
-                  )}
-                </button>
-              </div>
-            </div>
-          )}
 
           {/* Following Card */}
           {isAuthenticated && (
@@ -1156,6 +995,7 @@ export default function ProfilePage() {
           isEdit
         />
       )}
+      {showDeposit && <DepositModal onClose={() => setShowDeposit(false)} />}
     </DashboardChrome>
   );
 }

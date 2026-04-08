@@ -58,6 +58,7 @@ const navItems = [
   { icon: TrendingUp, label: "Trades", href: "/dashboard/social" },
   { icon: Users, label: "Traders", href: "/dashboard/traders" },
   { icon: Trophy, label: "Leaderboard", href: "/dashboard/leaderboard" },
+  { icon: ArrowRightLeft, label: "Actions", href: "/dashboard/actions" },
   { icon: Gift, label: "Referral", href: "/dashboard/referral" },
   { icon: User, label: "Profile", href: "/dashboard/profile" },
 ];
@@ -119,7 +120,7 @@ type MenuItem =
       badge?: string;
     };
 
-function HamburgerMenu({ onLogout, onDeposit, onWithdraw, onTransferToSafe }: { onLogout: () => void; onDeposit: () => void; onWithdraw: () => void; onTransferToSafe: () => void }) {
+function HamburgerMenu({ onLogout, onWithdraw, onTransferToSafe }: { onLogout: () => void; onWithdraw: () => void; onTransferToSafe: () => void }) {
   const [open, setOpen] = useState(false);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -151,7 +152,6 @@ function HamburgerMenu({ onLogout, onDeposit, onWithdraw, onTransferToSafe }: { 
   }
 
   const items: MenuItem[] = [
-    { icon: ArrowDownToLine, label: "Deposit", onClick: () => { setOpen(false); onDeposit(); } },
     { icon: ArrowUpFromLine, label: "Withdraw", onClick: () => { setOpen(false); onWithdraw(); } },
     { icon: ArrowRightLeft, label: "Transfer to Safe", onClick: () => { setOpen(false); onTransferToSafe(); } },
     { icon: Share2, label: "Share", onClick: handleShare },
@@ -402,7 +402,7 @@ export function DashboardChrome({ title, children }: DashboardChromeProps) {
       <aside className="hidden lg:flex w-[200px] shrink-0 border-r border-border flex-col bg-[#0D0D14]">
         {/* Logo */}
         <Link
-          href="/"
+          href="/dashboard"
           className="flex items-center gap-2.5 px-5 py-6 border-b border-border"
         >
           <Image
@@ -639,11 +639,11 @@ export function DashboardChrome({ title, children }: DashboardChromeProps) {
 
             <UserBadge />
 
-            <HamburgerMenu onLogout={logout} onDeposit={() => setShowDeposit(true)} onWithdraw={() => setShowWithdraw(true)} onTransferToSafe={() => setShowTransferToSafe(true)} />
+            <HamburgerMenu onLogout={logout} onWithdraw={() => setShowWithdraw(true)} onTransferToSafe={() => setShowTransferToSafe(true)} />
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto pt-12 pb-24 lg:pt-0 lg:pb-0">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden pt-12 pb-24 lg:pt-0 lg:pb-0">
           {children}
         </main>
       </div>
