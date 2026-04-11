@@ -79,7 +79,6 @@ export default function MetEnginePage() {
     const msg = err instanceof Error ? err.message : "Query failed";
     if (msg === "insufficient_credits") {
       setError("Insufficient credits. Top up to continue.");
-      setShowTopUp(true);
     } else {
       setError(msg);
     }
