@@ -167,7 +167,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No payment options available." }, { status: 502 });
     }
 
-    const price = Number(paymentRequired.accepts[0]!.amount);
+    // x402 amount is in USDC base units (6 decimals), convert to dollars
+    const rawAmount = Number(paymentRequired.accepts[0]!.amount);
+    const price = rawAmount >= 1000 ? rawAmount / 1_000_000 : rawAmount;
 
     // Step 3: Check user credits BEFORE paying
     const balance = await getBalance(userId);
