@@ -269,7 +269,12 @@ export async function queryMetEngine(query: MetEngineQuery): Promise<MetEngineRe
   const body = await res.json();
 
   if (!res.ok) {
-    const err = body as MetEngineError;
+    const err = body as MetEngineError & { balance?: number; required?: number };
+    if (err.error === "insufficient_credits" && err.required != null) {
+      throw new Error(
+        `insufficient_credits: need $${err.required.toFixed(2)} but balance is $${(err.balance ?? 0).toFixed(2)}`
+      );
+    }
     throw new Error(err.error ?? `MetEngine request failed (${res.status})`);
   }
 

@@ -77,8 +77,8 @@ export default function MetEnginePage() {
 
   const handleQueryError = useCallback((err: unknown) => {
     const msg = err instanceof Error ? err.message : "Query failed";
-    if (msg === "insufficient_credits") {
-      setError("Insufficient credits. Top up to continue.");
+    if (msg.startsWith("insufficient_credits")) {
+      setError(msg.replace("insufficient_credits: ", "Insufficient credits — ") + ". Top up to continue.");
     } else {
       setError(msg);
     }
