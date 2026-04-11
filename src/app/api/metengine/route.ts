@@ -181,6 +181,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Step 4: Sign and pay
+    console.log("[metengine] x402 price:", price, "USD for", endpoint);
     const paymentPayload = await httpClient.createPaymentPayload(paymentRequired);
     const paymentHeaders = httpClient.encodePaymentSignatureHeader(paymentPayload);
 
@@ -194,6 +195,7 @@ export async function POST(request: NextRequest) {
 
     if (!paid.ok) {
       const errBody = await paid.json().catch(() => ({}));
+      console.error("[metengine] x402 payment failed:", paid.status, JSON.stringify(errBody));
       return NextResponse.json(
         { error: (errBody as Record<string, string>).error ?? `Payment failed (${paid.status})` },
         { status: paid.status },
