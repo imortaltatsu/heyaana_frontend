@@ -1133,3 +1133,85 @@ body::before {
     transform: translateX(0);
   }
 }
+
+/* ────────────────────────────────────────────────
+   heyanna landing v2 — scoped under .lv2 root.
+   All visual rules live inside .lv2 { ... } so they
+   never leak into dashboard/docs/onboarding.
+   ──────────────────────────────────────────────── */
+
+@theme {
+  /* Expose font-display for landing-v2; same family as font-sans. */
+  --font-display: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+@keyframes lv2-mask-up {
+  from { clip-path: inset(100% 0 0 0); transform: translate3d(0,40px,0); }
+  to   { clip-path: inset(0 0 0 0);    transform: translate3d(0,0,0); }
+}
+@keyframes lv2-ticker {
+  from { transform: translate3d(0,0,0); }
+  to   { transform: translate3d(-50%,0,0); }
+}
+@keyframes lv2-blink { 0%, 60% { opacity: 1; } 61%, 100% { opacity: 0.25; } }
+@keyframes lv2-pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(198,255,58,0.55), 0 0 12px rgba(198,255,58,0.6); }
+  50%      { box-shadow: 0 0 0 6px rgba(198,255,58,0),    0 0 22px rgba(198,255,58,0.9); }
+}
+@keyframes lv2-blue-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(70,110,255,0.55), 0 0 12px rgba(70,110,255,0.6); }
+  50%      { box-shadow: 0 0 0 6px rgba(70,110,255,0),    0 0 22px rgba(70,110,255,0.9); }
+}
+
+.lv2 {
+  background: #070710;
+  color: #EDEDF2;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-synthesis: none;
+}
+
+.lv2 ::selection { background: #C6FF3A; color: #070710; }
+
+.lv2 .grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+
+.lv2 .mask-reveal { animation: lv2-mask-up 900ms cubic-bezier(0.2, 0.7, 0.1, 1) both; }
+
+.lv2 .marquee-track { animation: lv2-ticker var(--marquee-duration, 60s) linear infinite; will-change: transform; }
+.lv2 .marquee-pause:hover .marquee-track { animation-play-state: paused; }
+
+.lv2 .blink { animation: lv2-blink 1.4s steps(2, end) infinite; }
+
+.lv2 .dot-pulse { animation: lv2-pulse-glow 1.6s ease-out infinite; }
+.lv2 .dot-blue-pulse { animation: lv2-blue-pulse 1.8s ease-out infinite; }
+
+.lv2 .scanline { position: relative; overflow: hidden; isolation: isolate; }
+.lv2 .scanline::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(198,255,58,0.06) 50%, transparent 100%);
+  transform: translateY(-101%);
+  transition: transform 600ms cubic-bezier(0.2,0.7,0.1,1);
+  pointer-events: none;
+}
+.lv2 .scanline:hover::after { transform: translateY(101%); }
+
+.lv2 .crosshair { position: fixed; inset: 0; pointer-events: none; z-index: 60; mix-blend-mode: difference; }
+.lv2 .crosshair line { stroke: rgba(255,255,255,0.35); stroke-width: 1; stroke-dasharray: 2 5; }
+
+.lv2 .spotlight {
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(70,110,255,0.18), rgba(70,110,255,0) 60%);
+  transition: background-position 200ms linear;
+}
+
+.lv2 .pixel-btn:hover .pixel-btn-label { color: var(--hover-fg) !important; }
+
+/* Hide the global soft-light film grain on landing-v2 (it has its own moodier styling) */
+body:has(.lv2)::before { display: none !important; }

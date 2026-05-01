@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Sandbox / standalone subprojects (separate repos)
+/heyannav2
+
+# Local scripts not part of the app
+/scripts
