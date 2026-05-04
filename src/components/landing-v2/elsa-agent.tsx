@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { ElsaLogo } from "./elsa-logo";
 
 /**
  * ELSA agent — fixed pixel-art mascot in the bottom-right corner.
@@ -169,17 +169,17 @@ export function ElsaAgent() {
           maxWidth: 320,
         }}
       >
-        <div className="relative bg-[#070710] border border-[#C6FF3A]/60 px-3.5 py-2.5 shadow-[0_0_24px_rgba(198,255,58,0.18)]">
-          <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#C6FF3A] mb-1 flex items-center gap-2">
-            <span className="size-1.5 rounded-full bg-[#C6FF3A] dot-pulse inline-block" /> ELSA
+        <div className="relative bg-[#070710] border border-[#FF3D7F]/60 px-3.5 py-2.5 shadow-[0_0_24px_rgba(255,61,127,0.22)]">
+          <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#FF3D7F] mb-1 flex items-center gap-2">
+            <span className="size-1.5 rounded-full bg-[#FF3D7F] dot-pulse inline-block" /> ELSA
           </div>
           <div className="font-display text-[14px] leading-[1.4] text-[#EDEDF2]">
             {shown}
-            <span className="inline-block w-[7px] h-[14px] -mb-[2px] ml-[2px] bg-[#C6FF3A] blink align-baseline" />
+            <span className="inline-block w-[7px] h-[14px] -mb-[2px] ml-[2px] bg-[#FF3D7F] blink align-baseline" />
           </div>
           {/* tail */}
           <span
-            className="absolute -bottom-[7px] right-6 w-3 h-3 rotate-45 border-r border-b border-[#C6FF3A]/60"
+            className="absolute -bottom-[7px] right-6 w-3 h-3 rotate-45 border-r border-b border-[#FF3D7F]/60"
             style={{ background: "#070710" }}
             aria-hidden
           />
@@ -196,20 +196,15 @@ export function ElsaAgent() {
       >
         <span
           aria-hidden
-          className="absolute inset-0 rounded-full bg-[#C6FF3A]/15 blur-2xl"
+          className="absolute inset-0 rounded-full bg-[#FF3D7F]/20 blur-2xl"
         />
-        <Image
-          src="/heyannalogo.png"
-          alt=""
-          width={80}
-          height={80}
-          style={{ imageRendering: "pixelated" }}
-          priority
-        />
+        <span className="relative grid place-items-center w-full h-full">
+          <ElsaLogo size={64} color="#FF3D7F" />
+        </span>
         {/* online status pip */}
         <span
           aria-hidden
-          className="absolute -bottom-1 -right-1 size-3 rounded-full bg-[#C6FF3A] dot-pulse border-2 border-[#070710]"
+          className="absolute -bottom-1 -right-1 size-3 rounded-full bg-[#FF3D7F] dot-pulse border-2 border-[#070710]"
         />
       </button>
     </div>

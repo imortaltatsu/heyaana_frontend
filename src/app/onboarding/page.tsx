@@ -12,6 +12,7 @@ import { useTelegramWidget } from "@/lib/useTelegramWidget";
 import { TOKEN_STORAGE_KEY, checkOnboardStatus, onboardMe } from "@/lib/auth-api";
 import { useAuth } from "@/lib/useAuth";
 import { env } from "@/lib/env";
+import { ElsaLogo } from "@/components/landing-v2/elsa-logo";
 
 const STEPS = [
   { id: 0, title: "Connect", subtitle: "Link your account" },
@@ -333,61 +334,155 @@ function OnboardingPageContent() {
   }, [step, renderWidget, scriptLoaded]);
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="lv2 min-h-screen bg-[#070710] text-[#EDEDF2] relative">
       {showVerifyingGate && (
-        <div className="absolute inset-0 z-30 bg-background/95 backdrop-blur-sm flex flex-col items-center justify-center p-4">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-primary mb-4" />
-          <p className="text-sm font-mono text-muted animate-pulse">Verifying session...</p>
+        <div className="fixed inset-0 z-50 bg-[#070710]/95 backdrop-blur-sm flex flex-col items-center justify-center p-4">
+          <Loader2 className="w-8 h-8 animate-spin text-[#466EFF] mb-4" />
+          <p className="text-sm font-mono uppercase tracking-[0.16em] text-[#A8A8B8] animate-pulse">Verifying session...</p>
         </div>
       )}
-      {/* Background */}
-      <div className="absolute inset-0 grid-bg opacity-30" />
-      <div className="absolute inset-0 radial-fade" />
 
-      <div className="relative z-10 max-w-3xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <Link href="/" className="flex items-center gap-2">
-            <Image
-              src="/heyannalogo.png"
-              alt="HeyAnna logo"
-              width={32}
-              height={32}
-              className="w-8 h-8 rounded-lg glow-blue"
-            />
-            <span className="text-lg font-bold">
-              Hey<span className="text-blue-primary">Anna</span>
+      {/* Split-screen: left brand panel · right form */}
+      <div className="relative grid lg:grid-cols-[460px_1fr] min-h-screen">
+        {/* ── LEFT BRAND PANEL ─────────────────────────────────── */}
+        <aside className="hidden lg:block sticky top-0 self-start h-screen overflow-hidden border-r border-[#1A1A26] bg-[#070710]">
+          <div className="absolute inset-0 grid-bg opacity-60" />
+          <div className="absolute inset-0 radial-fade" />
+          <div className="absolute -left-8 bottom-4 pointer-events-none select-none">
+            <span className="font-display font-black text-[clamp(140px,14vw,200px)] leading-none text-[#0E0E1A] tracking-[-0.05em]">
+              0{step + 1}
             </span>
-          </Link>
-        </div>
+          </div>
 
-        {/* Progress Stepper */}
-        <div className="flex items-center justify-between mb-12">
-          {STEPS.map((s, i) => (
-            <div key={s.id} className="flex items-center">
-              <div className="flex flex-col items-center">
-                <div
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-mono font-bold transition-all ${step > s.id
-                    ? "bg-green-500 text-white"
-                    : step === s.id
-                      ? "bg-blue-primary text-white glow-blue"
-                      : "bg-surface border border-border text-muted"
-                    }`}
-                >
-                  {step > s.id ? <Check className="w-4 h-4" /> : s.id}
+          <div className="relative z-10 flex flex-col h-full p-8 xl:p-10">
+              {/* Brand row */}
+              <Link href="/" className="flex items-center gap-3">
+                <Image
+                  src="/heyannalogo.png"
+                  alt="HeyAnna logo"
+                  width={36}
+                  height={36}
+                  priority
+                  style={{ imageRendering: "pixelated" }}
+                />
+                <span className="font-display text-[20px] font-bold tracking-tight">
+                  heyanna<span className="text-[#C6FF3A]">.</span>
+                </span>
+              </Link>
+
+              {/* Live status */}
+              <div className="mt-7 flex items-center gap-2">
+                <span className="size-1.5 rounded-full bg-[#C6FF3A]" style={{ boxShadow: "0 0 12px #C6FF3A" }} />
+                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#C6FF3A]">
+                  Onboarding · live
+                </span>
+              </div>
+
+              {/* Big slogan */}
+              <h1 className="mt-4 font-display font-black tracking-[-0.05em] leading-[0.9] text-[40px] xl:text-[48px]">
+                <span className="text-[#EDEDF2]">Don&apos;t trade.</span>
+                <br />
+                <span className="text-[#466EFF]">Outsource it.</span>
+              </h1>
+              <p className="mt-4 font-display text-[13px] leading-[1.55] text-[#A8A8B8] max-w-[320px]">
+                ELSA reads the tape, prices the edge, hits the button.{" "}
+                <span className="text-[#EDEDF2]">You sleep. We stack.</span>
+              </p>
+
+              {/* Vertical step timeline */}
+              <div className="mt-8 flex flex-col">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="h-px w-[18px] bg-[#FF3D7F]" />
+                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#FF3D7F]">Sequence</span>
                 </div>
-                <div className="hidden sm:block mt-2 text-center">
-                  <div className="text-xs font-medium">{s.title}</div>
-                  <div className="text-[10px] text-muted">{s.subtitle}</div>
+                {STEPS.map((s) => {
+                  const done = step > s.id;
+                  const active = step === s.id;
+                  return (
+                    <div key={s.id} className="flex items-center gap-3 py-1">
+                      <div
+                        className={`w-6 h-6 shrink-0 flex items-center justify-center font-mono text-[10px] font-bold transition-colors scanline relative ${
+                          done
+                            ? "bg-[#C6FF3A] text-[#070710]"
+                            : active
+                              ? "bg-[#466EFF] text-[#070710]"
+                              : "bg-[#0E0E1A] border border-[#1A1A26] text-[#6A6A7A]"
+                        }`}
+                      >
+                        {done ? <Check className="w-3 h-3" strokeWidth={3} /> : `0${s.id + 1}`}
+                      </div>
+                      <span className={`font-mono text-[10px] uppercase tracking-[0.18em] ${active ? "text-[#EDEDF2]" : done ? "text-[#A8A8B8]" : "text-[#6A6A7A]"}`}>
+                        {s.title}
+                      </span>
+                      {active && (
+                        <span className="ml-auto size-1.5 rounded-full bg-[#466EFF]" style={{ boxShadow: "0 0 10px #466EFF" }} />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* ELSA brand mark */}
+              <div className="mt-auto pt-6 border-t border-[#1A1A26]">
+                <div className="flex items-center gap-3">
+                  <ElsaLogoMark />
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#FF3D7F]">Powered by ELSA</span>
+                    <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#6A6A7A] truncate">heyelsa.ai · x402</span>
+                  </div>
                 </div>
               </div>
-              {i < STEPS.length - 1 && (
-                <div className={`w-8 sm:w-16 h-px mx-2 transition-colors ${step > s.id ? "bg-green-500" : "bg-border"
-                  }`} />
-              )}
             </div>
-          ))}
-        </div>
+        </aside>
+
+        {/* ── RIGHT FORM PANEL ─────────────────────────────────── */}
+        <div className="relative flex flex-col">
+          {/* bg layers (mobile + right) */}
+          <div className="absolute inset-0 grid-bg opacity-60 lg:opacity-30" />
+          <div className="absolute inset-0 radial-fade lg:hidden" />
+
+          {/* mobile-only header */}
+          <div className="lg:hidden relative z-10 flex items-center justify-between px-5 py-5 border-b border-[#1A1A26] bg-[#070710]">
+            <Link href="/" className="flex items-center gap-3">
+              <Image
+                src="/heyannalogo.png"
+                alt="HeyAnna logo"
+                width={32}
+                height={32}
+                priority
+                style={{ imageRendering: "pixelated" }}
+              />
+              <span className="font-display text-[18px] font-bold tracking-tight">
+                heyanna<span className="text-[#C6FF3A]">.</span>
+              </span>
+            </Link>
+            <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#6A6A7A]">
+              Step {step + 1} / 6
+            </span>
+          </div>
+
+          {/* mobile-only horizontal stepper */}
+          <div className="lg:hidden relative z-10 flex items-center justify-between px-5 py-4 border-b border-[#1A1A26]">
+            {STEPS.map((s, i) => (
+              <div key={s.id} className="flex items-center flex-1">
+                <div
+                  className={`w-7 h-7 shrink-0 flex items-center justify-center font-mono text-[10px] font-bold transition-colors scanline ${step > s.id
+                    ? "bg-[#C6FF3A] text-[#070710]"
+                    : step === s.id
+                      ? "bg-[#466EFF] text-[#070710]"
+                      : "bg-[#0E0E1A] border border-[#1A1A26] text-[#6A6A7A]"
+                    }`}
+                >
+                  {step > s.id ? <Check className="w-3 h-3" strokeWidth={3} /> : s.id + 1}
+                </div>
+                {i < STEPS.length - 1 && (
+                  <div className={`flex-1 h-px mx-1.5 ${step > s.id ? "bg-[#C6FF3A]" : "bg-[#1A1A26]"}`} />
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="relative z-10 flex-1 px-5 sm:px-10 lg:px-14 py-10 lg:py-14 max-w-3xl w-full mx-auto">
 
         {/* Step Content */}
         <AnimatePresence mode="wait">
@@ -401,21 +496,28 @@ function OnboardingPageContent() {
             {/* Step 0: Connect (TG Login) */}
             {step === 0 && (
               <div className="space-y-6">
-                <div className="text-center mb-8">
-                  <h2 className="text-3xl font-bold mb-2">Connect Your Account</h2>
-                  <p className="text-muted">Sign in with Telegram to start trading on Polymarket</p>
+                <div className="text-center mb-10">
+                  <div className="flex items-center justify-center gap-3 mb-5">
+                    <div className="h-px w-[18px] bg-[#466EFF]" />
+                    <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#466EFF]">Step 01 · Connect</span>
+                    <div className="h-px w-[18px] bg-[#466EFF]" />
+                  </div>
+                  <h2 className="font-display font-black text-[clamp(36px,6vw,64px)] leading-[0.95] tracking-[-0.04em] mb-3">
+                    Connect your <span className="text-[#466EFF]">account</span>.
+                  </h2>
+                  <p className="font-display text-[15px] leading-[1.5] text-[#A8A8B8]">Sign in with Telegram to start trading on Polymarket.</p>
                 </div>
 
                 <div className="space-y-4 max-w-md mx-auto">
                   {/* Telegram Login Widget */}
-                  <div className="w-full flex items-center justify-between p-5 dashboard-card">
+                  <div className="w-full flex items-center justify-between p-5 bg-[#0E0E1A] border border-[#1A1A26] scanline relative">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                        <MessageCircle className="w-6 h-6 text-blue-400" />
+                      <div className="w-12 h-12 bg-[#26A5E4] flex items-center justify-center" style={{ imageRendering: "pixelated" }}>
+                        <MessageCircle className="w-6 h-6 text-[#070710]" strokeWidth={2.5} />
                       </div>
                       <div className="text-left">
-                        <div className="font-semibold">Telegram</div>
-                        <div className="text-xs text-muted">Sign in to get started</div>
+                        <div className="font-display font-bold text-[15px]">Telegram</div>
+                        <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#6A6A7A] mt-0.5">Sign in to get started</div>
                       </div>
                     </div>
                     <div className="flex items-center">
@@ -423,27 +525,25 @@ function OnboardingPageContent() {
                     </div>
                   </div>
 
-                  <p className="text-[11px] text-muted font-mono">
-                    Bot:{" "}
-                    <span className="text-foreground">
-                      @{TELEGRAM_BOT_USERNAME}
-                    </span>
-                  </p>
-                  <p className="text-[11px] text-muted font-mono">
-                    Current host:{" "}
-                    <span className="text-foreground">{currentHostname ?? "unknown"}</span>
-                  </p>
+                  <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#6A6A7A] space-y-1">
+                    <p>
+                      Bot · <span className="text-[#EDEDF2]">@{TELEGRAM_BOT_USERNAME}</span>
+                    </p>
+                    <p>
+                      Host · <span className="text-[#EDEDF2]">{currentHostname ?? "unknown"}</span>
+                    </p>
+                  </div>
 
                   {/* Dev Login (use ?dev=true to show) */}
                   {showDevLogin && (
-                    <div className="w-full p-5 dashboard-card" style={{ borderStyle: "dashed" }}>
+                    <div className="w-full p-5 bg-[#0E0E1A] border border-[#1A1A26] scanline relative" style={{ borderStyle: "dashed" }}>
                       <div className="flex items-center gap-4 mb-3">
-                        <div className="w-12 h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center">
-                          <Zap className="w-6 h-6 text-yellow-400" />
+                        <div className="w-12 h-12 bg-[#C6FF3A]/10 border border-[#C6FF3A]/30 flex items-center justify-center">
+                          <Zap className="w-6 h-6 text-[#C6FF3A]" strokeWidth={2.5} />
                         </div>
                         <div className="text-left">
-                          <div className="font-semibold text-sm">Dev Login</div>
-                          <div className="text-[10px] text-muted font-mono tracking-tight leading-none italic opacity-70">Testing/Debug Only</div>
+                          <div className="font-display font-bold text-[14px]">Dev Login</div>
+                          <div className="text-[10px] text-[#6A6A7A] font-mono uppercase tracking-[0.14em]">Testing/Debug Only</div>
                         </div>
                       </div>
                       <div className="flex gap-2">
@@ -452,7 +552,7 @@ function OnboardingPageContent() {
                           defaultValue="1"
                           id="dev-user-id"
                           placeholder="Telegram User ID"
-                          className="flex-1 px-3 py-2 text-sm font-mono dark-input"
+                          className="flex-1 px-3 py-2 text-sm font-mono bg-[#070710] border border-[#1A1A26] focus:border-[#466EFF] outline-none text-[#EDEDF2] tracking-[0.08em]"
                         />
                         <button
                           onClick={() => {
@@ -467,7 +567,7 @@ function OnboardingPageContent() {
                             }
                           }}
                           disabled={loginLoading}
-                          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-primary text-white text-sm font-medium hover:bg-blue-dark transition-all disabled:opacity-50"
+                          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#466EFF] text-[#070710] text-sm font-medium hover:bg-[#3856d9] transition-all disabled:opacity-50"
                         >
                           {loginLoading ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -481,22 +581,22 @@ function OnboardingPageContent() {
                   )}
 
                   {loginError && (
-                    <div className="text-center text-sm text-red-400 font-mono bg-red-500/5 border border-red-500/20 rounded-lg px-4 py-2">
+                    <div className="text-center text-[11px] uppercase tracking-[0.14em] text-[#FF3D7F] font-mono bg-[#FF3D7F]/[0.05] border border-[#FF3D7F]/30 px-4 py-2.5">
                       {loginError}
                     </div>
                   )}
 
-                  <button className="w-full flex items-center justify-between p-5 dashboard-card opacity-50 cursor-not-allowed" disabled>
+                  <button className="w-full flex items-center justify-between p-5 bg-[#0E0E1A] border border-[#1A1A26] scanline relative opacity-50 cursor-not-allowed" disabled>
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-blue-primary/10 flex items-center justify-center">
-                        <Bot className="w-6 h-6 text-blue-light" />
+                      <div className="w-12 h-12 bg-[#466EFF]/10 border border-[#466EFF]/30 flex items-center justify-center">
+                        <Bot className="w-6 h-6 text-[#466EFF]" strokeWidth={2} />
                       </div>
                       <div className="text-left">
-                        <div className="font-semibold">Elsa AI x402</div>
-                        <div className="text-xs text-muted">Enable AI intelligence layer</div>
+                        <div className="font-display font-bold text-[15px]">Elsa AI x402</div>
+                        <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#6A6A7A] mt-0.5">AI intelligence layer</div>
                       </div>
                     </div>
-                    <span className="text-[10px] font-mono text-muted border border-border rounded px-2 py-0.5">SOON</span>
+                    <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#C6FF3A] border border-[#C6FF3A]/40 px-2 py-1">Soon</span>
                   </button>
                 </div>
               </div>
@@ -505,20 +605,27 @@ function OnboardingPageContent() {
             {/* Step 1: Invite Code */}
             {step === 1 && (
               <div className="space-y-6">
-                <div className="text-center mb-8">
-                  <h2 className="text-3xl font-bold mb-2">Enter Invite Code</h2>
-                  <p className="text-muted">You need an invite code to access HeyAnna</p>
+                <div className="text-center mb-10">
+                  <div className="flex items-center justify-center gap-3 mb-5">
+                    <div className="h-px w-[18px] bg-[#466EFF]" />
+                    <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#466EFF]">Step 02 · Invite</span>
+                    <div className="h-px w-[18px] bg-[#466EFF]" />
+                  </div>
+                  <h2 className="font-display font-black text-[clamp(36px,6vw,64px)] leading-[0.95] tracking-[-0.04em] mb-3">
+                    Enter <span className="text-[#C6FF3A]">invite code</span>.
+                  </h2>
+                  <p className="font-display text-[15px] leading-[1.5] text-[#A8A8B8]">You need an invite code to access HeyAnna.</p>
                 </div>
 
                 <div className="space-y-4 max-w-md mx-auto">
-                  <div className="w-full p-5 dashboard-card">
+                  <div className="w-full p-5 bg-[#0E0E1A] border border-[#1A1A26] scanline relative">
                     <div className="flex items-center gap-4 mb-4">
-                      <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                        <Ticket className="w-6 h-6 text-blue-400" />
+                      <div className="w-12 h-12 bg-[#C6FF3A]/10 border border-[#C6FF3A]/30 flex items-center justify-center">
+                        <Ticket className="w-6 h-6 text-[#C6FF3A]" strokeWidth={2.5} />
                       </div>
                       <div className="text-left">
-                        <div className="font-semibold">Invite Code</div>
-                        <div className="text-xs text-muted">Enter your unique access code</div>
+                        <div className="font-display font-bold text-[15px]">Invite Code</div>
+                        <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#6A6A7A] mt-0.5">Unique access code</div>
                       </div>
                     </div>
                     <div className="flex gap-2">
@@ -526,7 +633,7 @@ function OnboardingPageContent() {
                         type="text"
                         id="invite-code-input"
                         placeholder="E.G. ABC12345"
-                        className="flex-1 px-3 py-2 text-sm font-mono dark-input uppercase"
+                        className="flex-1 px-3 py-2 text-sm font-mono bg-[#070710] border border-[#1A1A26] focus:border-[#466EFF] outline-none text-[#EDEDF2] tracking-[0.08em] uppercase"
                         maxLength={16}
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
@@ -556,18 +663,18 @@ function OnboardingPageContent() {
                           }
                         }}
                         disabled={inviteLoading}
-                        className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-primary text-white text-sm font-medium hover:bg-blue-dark transition-all disabled:opacity-50"
+                        className="flex items-center gap-1.5 px-5 py-2 bg-[#C6FF3A] text-[#070710] font-display font-extrabold text-[13px] hover:bg-[#070710] hover:text-[#C6FF3A] border-2 border-[#C6FF3A] transition-colors scanline disabled:opacity-50"
                       >
                         {inviteLoading ? (
                           <Loader2 className="w-3.5 h-3.5 animate-spin" />
                         ) : (
-                          <ArrowRight className="w-3.5 h-3.5" />
+                          <ArrowRight className="w-3.5 h-3.5" strokeWidth={3} />
                         )}
                         Continue
                       </button>
                     </div>
                     {inviteError && (
-                      <p className="mt-2 text-xs text-red-400 font-mono">{inviteError}</p>
+                      <p className="mt-3 text-[11px] uppercase tracking-[0.14em] text-[#FF3D7F] font-mono">{inviteError}</p>
                     )}
                   </div>
                 </div>
@@ -577,9 +684,16 @@ function OnboardingPageContent() {
             {/* Step 2: Market Preferences */}
             {step === 2 && (
               <div className="space-y-6">
-                <div className="text-center mb-8">
-                  <h2 className="text-3xl font-bold mb-2">Top Markets</h2>
-                  <p className="text-muted">Live prediction markets — ranked by volume</p>
+                <div className="text-center mb-10">
+                  <div className="flex items-center justify-center gap-3 mb-5">
+                    <div className="h-px w-[18px] bg-[#466EFF]" />
+                    <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#466EFF]">Step 03 · Markets</span>
+                    <div className="h-px w-[18px] bg-[#466EFF]" />
+                  </div>
+                  <h2 className="font-display font-black text-[clamp(36px,6vw,64px)] leading-[0.95] tracking-[-0.04em] mb-3">
+                    Top <span className="text-[#466EFF]">markets</span>.
+                  </h2>
+                  <p className="font-display text-[15px] leading-[1.5] text-[#A8A8B8]">Live prediction markets — ranked by volume.</p>
                 </div>
                 <TopMarketsPreview />
               </div>
@@ -588,9 +702,16 @@ function OnboardingPageContent() {
             {/* Step 3: Risk Tolerance */}
             {step === 3 && (
               <div className="space-y-6">
-                <div className="text-center mb-8">
-                  <h2 className="text-3xl font-bold mb-2">Define Risk Tolerance</h2>
-                  <p className="text-muted">Set your comfort level for automated trade copying</p>
+                <div className="text-center mb-10">
+                  <div className="flex items-center justify-center gap-3 mb-5">
+                    <div className="h-px w-[18px] bg-[#466EFF]" />
+                    <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#466EFF]">Step 04 · Risk</span>
+                    <div className="h-px w-[18px] bg-[#466EFF]" />
+                  </div>
+                  <h2 className="font-display font-black text-[clamp(36px,6vw,64px)] leading-[0.95] tracking-[-0.04em] mb-3">
+                    Define <span className="text-[#FF3D7F]">risk tolerance</span>.
+                  </h2>
+                  <p className="font-display text-[15px] leading-[1.5] text-[#A8A8B8]">Set your comfort level for automated trade copying.</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-xl mx-auto">
@@ -628,22 +749,25 @@ function OnboardingPageContent() {
                         setRiskLevel(level.key);
                         setMaxExposure(level.key === "conservative" ? 10 : level.key === "moderate" ? 25 : 50);
                       }}
-                      className={`p-5 dashboard-card text-left transition-all ${riskLevel === level.key
-                        ? "!border-blue-primary/50 bg-blue-primary/5 glow-blue"
-                        : "hover:!border-blue-primary/20"
+                      className={`p-5 bg-[#0E0E1A] border scanline relative text-left transition-colors ${riskLevel === level.key
+                        ? "border-[#466EFF] bg-[#466EFF]/[0.06]"
+                        : "border-[#1A1A26] hover:border-[#466EFF]/40"
                         }`}
                     >
-                      <level.icon className={`w-6 h-6 mb-3 ${riskLevel === level.key ? "text-blue-primary" : "text-muted"}`} />
-                      <div className="font-semibold mb-1">{level.label}</div>
-                      <p className="text-xs text-muted mb-3">{level.desc}</p>
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-[10px] font-mono">
-                          <span className="text-muted">Max Exposure</span>
-                          <span className="text-blue-primary">{level.maxExp}</span>
+                      <div className="flex items-center justify-between mb-4">
+                        <level.icon className={`w-5 h-5 ${riskLevel === level.key ? "text-[#466EFF]" : "text-[#6A6A7A]"}`} strokeWidth={2} />
+                        <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#6A6A7A]">0{["conservative","moderate","aggressive"].indexOf(level.key)+1}</span>
+                      </div>
+                      <div className="font-display font-bold text-[16px] tracking-[-0.01em] mb-2">{level.label}</div>
+                      <p className="font-display text-[12px] leading-[1.5] text-[#A8A8B8] mb-4">{level.desc}</p>
+                      <div className="space-y-1.5 pt-3 border-t border-[#1A1A26]">
+                        <div className="flex justify-between text-[10px] font-mono uppercase tracking-[0.12em]">
+                          <span className="text-[#6A6A7A]">Max Exposure</span>
+                          <span className="text-[#466EFF]">{level.maxExp}</span>
                         </div>
-                        <div className="flex justify-between text-[10px] font-mono">
-                          <span className="text-muted">Per Trade</span>
-                          <span className="text-blue-primary">{level.perTrade}</span>
+                        <div className="flex justify-between text-[10px] font-mono uppercase tracking-[0.12em]">
+                          <span className="text-[#6A6A7A]">Per Trade</span>
+                          <span className="text-[#466EFF]">{level.perTrade}</span>
                         </div>
                       </div>
                     </button>
@@ -653,7 +777,7 @@ function OnboardingPageContent() {
                 <div className="max-w-md mx-auto mt-6">
                   <div className="flex items-center justify-between mb-2">
                     <label className="text-sm text-muted">Custom Max Exposure</label>
-                    <span className="text-sm font-mono font-bold text-blue-primary">{maxExposure}%</span>
+                    <span className="text-sm font-mono font-bold text-[#466EFF]">{maxExposure}%</span>
                   </div>
                   <input
                     type="range"
@@ -670,12 +794,19 @@ function OnboardingPageContent() {
             {/* Step 4: Select Traders */}
             {step === 4 && (
               <div className="space-y-6">
-                <div className="text-center mb-8">
-                  <h2 className="text-3xl font-bold mb-2">Pick Traders to Copy</h2>
-                  <p className="text-muted">Select top-performing traders to automatically mirror</p>
+                <div className="text-center mb-10">
+                  <div className="flex items-center justify-center gap-3 mb-5">
+                    <div className="h-px w-[18px] bg-[#466EFF]" />
+                    <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#466EFF]">Step 05 · Copy Desk</span>
+                    <div className="h-px w-[18px] bg-[#466EFF]" />
+                  </div>
+                  <h2 className="font-display font-black text-[clamp(36px,6vw,64px)] leading-[0.95] tracking-[-0.04em] mb-3">
+                    Pick <span className="text-[#C6FF3A]">traders</span> to copy.
+                  </h2>
+                  <p className="font-display text-[15px] leading-[1.5] text-[#A8A8B8]">Select top-performing traders to automatically mirror.</p>
                 </div>
 
-                <div className="max-w-xl mx-auto dashboard-card overflow-hidden">
+                <div className="max-w-xl mx-auto bg-[#0E0E1A] border border-[#1A1A26] scanline relative overflow-hidden">
                   {tradersLoading && (
                     <div className="flex items-center justify-center py-12">
                       <Loader2 className="w-6 h-6 animate-spin text-muted" />
@@ -777,30 +908,40 @@ function OnboardingPageContent() {
             {step === 5 && (
               <div className="space-y-8 text-center">
                 <div className="mb-8">
-                  <div className="w-20 h-20 rounded-2xl bg-blue-primary/10 border border-blue-primary/20 flex items-center justify-center mx-auto mb-6 glow-blue-strong">
-                    <Zap className="w-10 h-10 text-blue-primary" />
+                  <div className="w-20 h-20 bg-[#C6FF3A] flex items-center justify-center mx-auto mb-6 scanline" style={{ imageRendering: "pixelated", boxShadow: "0 0 40px rgba(198,255,58,0.25)" }}>
+                    <Zap className="w-10 h-10 text-[#070710]" strokeWidth={2.5} />
                   </div>
-                  <h2 className="text-3xl font-bold mb-2">You&apos;re All Set!</h2>
-                  <p className="text-muted">HeyAnna will now automatically copy trades from your selected traders</p>
+                  <div className="flex items-center justify-center gap-3 mb-5">
+                    <div className="h-px w-[18px] bg-[#C6FF3A]" />
+                    <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#C6FF3A]">Step 06 · Launch</span>
+                    <div className="h-px w-[18px] bg-[#C6FF3A]" />
+                  </div>
+                  <h2 className="font-display font-black text-[clamp(40px,7vw,72px)] leading-[0.95] tracking-[-0.04em] mb-3">
+                    You&apos;re <span className="text-[#C6FF3A]">all set</span>.
+                  </h2>
+                  <p className="font-display text-[15px] leading-[1.5] text-[#A8A8B8] max-w-md mx-auto">HeyAnna will now automatically copy trades from your selected traders.</p>
                 </div>
 
-                <div className="max-w-md mx-auto p-6 dashboard-card text-left space-y-3">
-                  <h4 className="text-sm font-semibold mb-3">Configuration Summary</h4>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted">Markets</span>
-                    <span className="font-mono text-blue-primary">{selectedMarkets.length} selected</span>
+                <div className="max-w-md mx-auto p-6 bg-[#0E0E1A] border border-[#1A1A26] scanline text-left space-y-3 relative">
+                  <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#1A1A26]">
+                    <span className="size-1.5 rounded-full bg-[#C6FF3A]" style={{ boxShadow: "0 0 12px #C6FF3A" }} />
+                    <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#C6FF3A]">Configuration</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted">Risk Profile</span>
-                    <span className="font-mono text-blue-primary capitalize">{riskLevel}</span>
+                  <div className="flex justify-between text-sm font-mono">
+                    <span className="text-[#6A6A7A] uppercase tracking-[0.12em] text-[11px]">Markets</span>
+                    <span className="text-[#466EFF]">{selectedMarkets.length} selected</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted">Max Exposure</span>
-                    <span className="font-mono text-blue-primary">{maxExposure}%</span>
+                  <div className="flex justify-between text-sm font-mono">
+                    <span className="text-[#6A6A7A] uppercase tracking-[0.12em] text-[11px]">Risk Profile</span>
+                    <span className="text-[#466EFF] capitalize">{riskLevel}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted">Copied Traders</span>
-                    <span className="font-mono text-blue-primary">{followedWallets.size}</span>
+                  <div className="flex justify-between text-sm font-mono">
+                    <span className="text-[#6A6A7A] uppercase tracking-[0.12em] text-[11px]">Max Exposure</span>
+                    <span className="text-[#466EFF]">{maxExposure}%</span>
+                  </div>
+                  <div className="flex justify-between text-sm font-mono">
+                    <span className="text-[#6A6A7A] uppercase tracking-[0.12em] text-[11px]">Copied Traders</span>
+                    <span className="text-[#466EFF]">{followedWallets.size}</span>
                   </div>
                 </div>
 
@@ -819,10 +960,10 @@ function OnboardingPageContent() {
                       localStorage.removeItem(`${ONBOARDING_DRAFT_PREFIX}${userOnboardingKey}`);
                     }
                   }}
-                  className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg bg-blue-primary text-white font-medium hover:bg-blue-dark transition-all glow-blue-strong"
+                  className="inline-flex items-center gap-2 px-7 py-[14px] bg-[#C6FF3A] text-[#070710] font-display font-extrabold text-[15px] hover:bg-[#070710] hover:text-[#C6FF3A] border-2 border-[#C6FF3A] transition-colors scanline"
                 >
                   Launch Dashboard
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4" strokeWidth={3} />
                 </Link>
               </div>
             )}
@@ -831,30 +972,36 @@ function OnboardingPageContent() {
 
         {/* Navigation Buttons */}
         {step < 5 && (
-          <div className="flex items-center justify-between mt-12">
+          <div className="flex items-center justify-between mt-14 pt-6 border-t border-[#1A1A26]">
             <button
               onClick={prev}
               disabled={step === 0}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm transition-all ${step === 0
-                ? "text-muted/30 cursor-not-allowed"
-                : "text-muted hover:text-foreground border border-border hover:border-blue-primary/30"
+              className={`flex items-center gap-2 px-5 py-3 font-mono text-[11px] uppercase tracking-[0.16em] transition-colors scanline ${step === 0
+                ? "text-[#2A2A3A] cursor-not-allowed border border-[#1A1A26]"
+                : "text-[#A8A8B8] hover:text-[#EDEDF2] border border-[#2A2A3A] hover:border-[#466EFF]"
                 }`}
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-3.5 h-3.5" strokeWidth={2.5} />
               Back
             </button>
             <button
               onClick={handleContinue}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-blue-primary text-white text-sm font-medium hover:bg-blue-dark transition-all glow-blue"
+              className="flex items-center gap-2 px-7 py-3 bg-[#466EFF] text-[#070710] font-display font-extrabold text-[14px] hover:bg-[#070710] hover:text-[#466EFF] border-2 border-[#466EFF] transition-colors scanline"
             >
               Continue
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4" strokeWidth={3} />
             </button>
           </div>
         )}
+          </div>
+        </div>
       </div>
     </div>
   );
+}
+
+function ElsaLogoMark() {
+  return <ElsaLogo size={32} color="#FF3D7F" />;
 }
 
 // ── Top Markets Preview (step 2) ────────────────────────────────
@@ -889,7 +1036,7 @@ function TopMarketsPreview() {
     return (
       <div className="max-w-lg mx-auto space-y-3">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="dashboard-card p-4 flex items-center gap-4 animate-pulse">
+          <div key={i} className="bg-[#0E0E1A] border border-[#1A1A26] scanline relative p-4 flex items-center gap-4 animate-pulse">
             <div className="w-10 h-10 rounded-xl bg-surface/60 shrink-0" />
             <div className="flex-1 space-y-2">
               <div className="h-3 bg-surface/60 rounded w-3/4" />
@@ -903,7 +1050,7 @@ function TopMarketsPreview() {
 
   if (!events.length) {
     return (
-      <div className="max-w-lg mx-auto p-8 dashboard-card flex flex-col items-center justify-center text-center text-muted">
+      <div className="max-w-lg mx-auto p-8 bg-[#0E0E1A] border border-[#1A1A26] scanline relative flex flex-col items-center justify-center text-center text-muted">
         <Globe className="w-10 h-10 mb-3 opacity-30" />
         <p className="text-sm">Could not load markets right now</p>
       </div>
@@ -922,7 +1069,7 @@ function TopMarketsPreview() {
         } catch { /* ignore */ }
 
         return (
-          <div key={event.id ?? i} className="dashboard-card p-4 flex items-center gap-4 hover:border-blue-primary/20 transition-all">
+          <div key={event.id ?? i} className="bg-[#0E0E1A] border border-[#1A1A26] scanline relative p-4 flex items-center gap-4 hover:border-blue-primary/20 transition-all">
             {/* Rank */}
             <span className="shrink-0 w-6 text-center text-xs font-bold font-mono text-muted/60">{i + 1}</span>
 
@@ -937,8 +1084,8 @@ function TopMarketsPreview() {
                 unoptimized
               />
             ) : (
-              <div className="w-10 h-10 rounded-xl bg-blue-primary/10 flex items-center justify-center shrink-0">
-                <Globe className="w-5 h-5 text-blue-primary/60" />
+              <div className="w-10 h-10 rounded-xl bg-[#466EFF]/10 flex items-center justify-center shrink-0">
+                <Globe className="w-5 h-5 text-[#466EFF]/60" />
               </div>
             )}
 

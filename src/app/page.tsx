@@ -14,6 +14,8 @@ import { PixelButton } from "@/components/landing-v2/pixel-button";
 import { PageLoader } from "@/components/landing-v2/page-loader";
 import { ElsaAgent } from "@/components/landing-v2/elsa-agent";
 import { TradeFlow } from "@/components/landing-v2/trade-flow";
+import { LiveTicker } from "@/components/landing-v2/live-ticker";
+import { ElsaLogo } from "@/components/landing-v2/elsa-logo";
 
 export default function Page() {
   return (
@@ -21,7 +23,7 @@ export default function Page() {
       <PageLoader />
       <ScrollProgress />
       <Crosshair />
-      <TickerBar />
+      <LiveTicker />
       <Nav />
       <Hero />
       <HeroStats />
@@ -37,38 +39,6 @@ export default function Page() {
       <Footer />
       <ElsaAgent />
     </main>
-  );
-}
-
-/* ─────────────────────────────────────────────── TICKER ─── */
-
-const TICKER_ITEMS: Array<readonly [string, string?]> = [
-  ["● LIVE", "text-[#C6FF3A]"],
-  ["BTC 5M WIN 73%"],
-  ["BTC 15M WIN 68%"],
-  ["ETH/USD $4,082"],
-  ["ELSA INSIGHTS LIVE", "text-[#466EFF]"],
-  ["ARB FOUND +4.1%", "text-[#C6FF3A]"],
-  ["SOL ▲ $214.7"],
-  ["FOMC T-2D"],
-  ["NEXT QUERY $0.0008 x402"],
-  ["DEGENS ONLINE 12,847"],
-];
-
-function TickerBar() {
-  return (
-    <div className="relative z-30 border-b border-[#1A1A26] bg-[#070710]">
-      <Marquee duration="55s">
-        <div className="flex items-center gap-8 py-2.5 pr-8 font-mono text-[12px] uppercase tracking-[0.12em] text-[#A8A8B8]">
-          {TICKER_ITEMS.map(([t, cls], i) => (
-            <span key={i} className="flex items-center gap-8">
-              <span className={cls ?? ""}>{t}</span>
-              <span className="text-[#2A2A3A]">·</span>
-            </span>
-          ))}
-        </div>
-      </Marquee>
-    </div>
   );
 }
 
@@ -228,7 +198,7 @@ function HeroStats() {
     <section className="px-5 sm:px-10 lg:px-20 py-16 border-y border-[#1A1A26]">
       <div className="grid grid-cols-2 md:grid-cols-5 gap-x-6 gap-y-10">
         <Stat label="Win rate (5M)" value={<CountUp to={73} suffix="%" />} accent="green" />
-        <Stat label="Routed (30d)" value={<><span>$</span><CountUp to={500} suffix="M+" /></>} accent="blue" />
+        <Stat label="Routed (30d)" value={<><span>$</span><CountUp to={500} suffix="K" /></>} accent="blue" />
         <Stat label="Markets tracked" value={<CountUp to={2541} suffix="+" />} />
         <Stat label="Avg latency" value={<CountUp to={38} suffix="ms" />} />
         <Stat label="Sleeping?" value={<span className="text-[#FF3D7F]">Never</span>} />
@@ -267,9 +237,18 @@ function Manifesto() {
             className="font-display font-black text-[clamp(48px,8vw,112px)] leading-[0.95] tracking-[-0.04em] [&>span:nth-child(n+12)]:text-[#466EFF]"
             stagger={45}
           />
-          <p className="font-display text-[16px] leading-[1.7] text-[#A8A8B8] max-w-[480px]">
-            HeyAnna pulls 5-minute and 15-minute BTC books off Kalshi (via dflow) and Polymarket. ELSA, our intelligence agent, prices the edge and pays per query over x402. <span className="text-[#EDEDF2]">No subscription. No middlemen. No mercy.</span>
-          </p>
+          <div className="max-w-[480px]">
+            <div className="flex items-center gap-3 mb-5 pb-4 border-b border-[#1A1A26]">
+              <ElsaLogo size={36} color="#FF3D7F" />
+              <div className="flex flex-col">
+                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#FF3D7F]">Powered by ELSA</span>
+                <span className="font-display font-bold text-[14px] text-[#EDEDF2]">heyelsa.ai · x402</span>
+              </div>
+            </div>
+            <p className="font-display text-[16px] leading-[1.7] text-[#A8A8B8]">
+              HeyAnna pulls 5-minute and 15-minute BTC books off Kalshi (via dflow) and Polymarket. <span className="text-[#FF3D7F]">ELSA</span>, our intelligence agent, prices the edge and pays per query over x402. <span className="text-[#EDEDF2]">No subscription. No middlemen. No mercy.</span>
+            </p>
+          </div>
         </div>
       </div>
     </section>
@@ -439,7 +418,7 @@ function FlexStats() {
         />
         <BigStat
           label="volume routed · 30d"
-          value={<><span>$</span><CountUp to={500} suffix="M+" /></>}
+          value={<><span>$</span><CountUp to={500} suffix="K" /></>}
           accent="blue"
           note="Auto-routed through HeyAnna in the last 30 days — on-chain, signed, every spread receipted."
         />
