@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useAuth } from "@/lib/useAuth";
-import { ChevronDown, LogOut, Copy, Check, Loader2, LogIn } from "lucide-react";
+import { ChevronDown, LogOut, Copy, Check, Loader2, LogIn } from "@/components/ui/icons";
 
 /**
  * UserBadge — shows the authenticated user's name / telegram ID

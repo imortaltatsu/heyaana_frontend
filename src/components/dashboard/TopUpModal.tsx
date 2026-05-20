@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { X, Loader2, Check, Zap, TrendingUp, Crown, Rocket, Wallet } from "lucide-react";
+import { X, Loader2, Check, Zap, TrendingUp, Crown, Rocket, Wallet } from "@/components/ui/icons";
 import { topUpCredits } from "@/lib/api";
 
 interface TopUpModalProps {

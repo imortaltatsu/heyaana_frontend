@@ -23,10 +23,10 @@ import {
   Fish,
   ExternalLink,
   Clock,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { useAuth } from "@/lib/useAuth";
 import Link from "next/link";
-import { Copy } from "lucide-react";
+import { Copy } from "@/components/ui/icons";
 
 /* ── Types ─────────────────────────────────────────────── */
 

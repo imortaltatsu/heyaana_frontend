@@ -10,7 +10,7 @@ import { CopyTradeModal } from "@/components/dashboard/CopyTradeModal";
 import {
   Loader2, TrendingUp, ArrowUpRight, ArrowDownRight,
   Copy, AlertCircle,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 

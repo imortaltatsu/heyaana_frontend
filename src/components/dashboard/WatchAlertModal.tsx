@@ -3,7 +3,7 @@
 import useSWR from "swr";
 import { useState } from "react";
 import { proxyFetcher } from "@/lib/api";
-import { X, Bell, Copy, CheckSquare } from "lucide-react";
+import { X, Bell, Copy, CheckSquare } from "@/components/ui/icons";
 
 type UserPortfolio = {
   wallet?: string;

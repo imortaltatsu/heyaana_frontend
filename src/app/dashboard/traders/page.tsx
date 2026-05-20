@@ -9,7 +9,7 @@ import { CopyTradeModal } from "@/components/dashboard/CopyTradeModal";
 import {
   Loader2, Users, UserPlus, UserMinus, AlertCircle,
   Search, ChevronDown, X, Lightbulb, Globe, Trophy, ExternalLink, ChevronLeft, ChevronRight,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { useState, useMemo, useEffect } from "react";
 
 // ── Types ──────────────────────────────────────────────────────

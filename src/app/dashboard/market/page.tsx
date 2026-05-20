@@ -26,7 +26,7 @@ import {
   Star,
   Share2,
   Check,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { useWatchlist } from "@/lib/useWatchlist";
 
 function formatTime(iso: string): string {

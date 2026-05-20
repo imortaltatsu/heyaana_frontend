@@ -13,7 +13,7 @@ import {
     AlertCircle,
     Clock,
     LineChart,
-} from "lucide-react";
+} from "@/components/ui/icons";
 
 type GammaSubMarket = {
     conditionId?: string;

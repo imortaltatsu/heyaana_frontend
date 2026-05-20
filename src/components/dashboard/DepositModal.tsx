@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { QRCodeSVG } from "qrcode.react";
-import { X, Copy, Check, Info, ChevronDown, AlertTriangle, Loader2 } from "lucide-react";
+import { X, Copy, Check, Info, ChevronDown, AlertTriangle, Loader2 } from "@/components/ui/icons";
 import { useAuth } from "@/lib/useAuth";
 import { fetchBridgeDeposit, type BridgeDepositInfo } from "@/lib/api";
 

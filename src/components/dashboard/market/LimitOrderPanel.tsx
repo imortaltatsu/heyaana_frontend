@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Market, postLimitOrder } from "@/lib/api";
-import { Loader2, CheckCircle2, AlertCircle, ExternalLink, Clock, ChevronDown } from "lucide-react";
+import { Loader2, CheckCircle2, AlertCircle, ExternalLink, Clock, ChevronDown } from "@/components/ui/icons";
 import { useAuth } from "@/lib/useAuth";
 
 interface LimitOrderPanelProps {

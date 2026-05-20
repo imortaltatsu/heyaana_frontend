@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Calculator, ChevronDown } from "lucide-react";
+import { Calculator, ChevronDown } from "@/components/ui/icons";
 
 interface PositionCalculatorProps {
   yesPrice: number;

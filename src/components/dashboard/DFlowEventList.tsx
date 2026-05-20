@@ -18,7 +18,7 @@ import {
     Clock,
     Flame,
     GitCompareArrows,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { DFlowEventCard, DFlowEventCardSkeleton } from "./DFlowEventCard";
 import type { DFlowEvent, EventsResponse, TagsByCategories } from "@/types/dflow";
 

@@ -11,7 +11,7 @@ import { WatchAlertModal } from "@/components/dashboard/WatchAlertModal";
 import {
   ArrowLeft, Loader2, AlertCircle, Bell, Copy,
   ChevronRight, Wallet, TrendingUp, BarChart2,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { useState } from "react";
 
 // ── Types ──────────────────────────────────────────────────────

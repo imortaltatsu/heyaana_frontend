@@ -29,7 +29,7 @@ import {
   Layers,
   Trophy,
   Bot,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { UserBadge } from "@/components/dashboard/WalletConnect";
 import { MobileTopBar, MobileBottomNav } from "@/components/dashboard/Sidebar";
 import { DepositModal } from "@/components/dashboard/DepositModal";

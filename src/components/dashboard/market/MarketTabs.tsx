@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Market, Trade } from "@/lib/api";
 import { ActivityFeed } from "./ActivityFeed";
 import { OrderbookView } from "./OrderbookView";
-import { BarChart3, Activity, Users } from "lucide-react";
+import { BarChart3, Activity, Users } from "@/components/ui/icons";
 
 interface MarketTabsProps {
   market: Market;

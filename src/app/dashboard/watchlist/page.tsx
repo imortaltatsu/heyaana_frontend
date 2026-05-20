@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { DashboardChrome } from "@/components/dashboard/DashboardChrome";
 import { useWatchlist } from "@/lib/useWatchlist";
-import { Star, Trash2, BarChart3, ExternalLink } from "lucide-react";
+import { Star, Trash2, BarChart3, ExternalLink } from "@/components/ui/icons";
 
 export default function WatchlistPage() {
   const { watchlist, removeWatch } = useWatchlist();

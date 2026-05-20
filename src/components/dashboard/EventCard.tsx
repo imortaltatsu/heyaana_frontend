@@ -1,6 +1,6 @@
 "use client";
 
-import { Link2, Bookmark, Clock } from "lucide-react";
+import { Link2, Bookmark, Clock } from "@/components/ui/icons";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import type { ViewMode } from "./MarketFeedNav";

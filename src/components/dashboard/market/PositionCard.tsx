@@ -4,7 +4,7 @@ import { useState } from "react";
 import useSWR from "swr";
 import { proxyFetcher, Portfolio, Position, closePosition } from "@/lib/api";
 import { useAuth } from "@/lib/useAuth";
-import { TrendingUp, TrendingDown, Loader2, X, BarChart3 } from "lucide-react";
+import { TrendingUp, TrendingDown, Loader2, X, BarChart3 } from "@/components/ui/icons";
 import { PnlShareButton } from "@/components/dashboard/PnlShareButton";
 
 interface PositionCardProps {

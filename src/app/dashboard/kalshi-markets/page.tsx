@@ -2,7 +2,7 @@
 
 import { DashboardChrome } from "@/components/dashboard/DashboardChrome";
 import { DFlowEventList } from "@/components/dashboard/DFlowEventList";
-import { Layers } from "lucide-react";
+import { Layers } from "@/components/ui/icons";
 
 export default function KalshiMarketsPage() {
     return (

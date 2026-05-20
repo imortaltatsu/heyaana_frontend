@@ -2,7 +2,7 @@
 
 import { Trade, formatRelativeTime } from "@/lib/api";
 import { useState, useMemo } from "react";
-import { ArrowUpRight, ArrowDownRight, ExternalLink } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, ExternalLink } from "@/components/ui/icons";
 
 interface ActivityFeedProps {
   trades: Trade[];

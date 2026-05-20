@@ -20,7 +20,7 @@ import {
   BarChart2,
   Bot,
   ArrowRightLeft,
-} from "lucide-react";
+} from "@/components/ui/icons";
 
 const mobileNavItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Home" },

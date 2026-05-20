@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { DashboardChrome } from "@/components/dashboard/DashboardChrome";
 import { useAuth } from "@/lib/useAuth";
 import { proxyFetcher, swapUSDC, withdrawFunds, chargeCredits } from "@/lib/api";
-import { Loader2, AlertCircle, CheckCircle2, ArrowLeftRight, ArrowUpFromLine, ArrowDownToLine, Zap } from "lucide-react";
+import { Loader2, AlertCircle, CheckCircle2, ArrowLeftRight, ArrowUpFromLine, ArrowDownToLine, Zap } from "@/components/ui/icons";
 import { DepositModal } from "@/components/dashboard/DepositModal";
 
 export default function ActionsPage() {

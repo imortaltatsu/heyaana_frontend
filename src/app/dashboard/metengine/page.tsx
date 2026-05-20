@@ -26,7 +26,7 @@ import {
   Check,
   Plus,
   Wallet,
-} from "lucide-react";
+} from "@/components/ui/icons";
 
 // ── Helpers ────────────────────────────────────────────────────
 

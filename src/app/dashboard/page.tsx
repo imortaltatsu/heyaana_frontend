@@ -9,7 +9,7 @@ import { MarketFeed } from "@/components/dashboard/MarketFeed";
 import { StatsSidebar, StatsMobileStrip } from "@/components/dashboard/StatsSidebar";
 import { proxyFetcher, type Portfolio, type GammaEventSummary, gammaEventsFetcher } from "@/lib/api";
 import { useAuth } from "@/lib/useAuth";
-import { ShieldAlert, X, Wallet, TrendingUp, Zap } from "lucide-react";
+import { ShieldAlert, X, Wallet, TrendingUp, Zap } from "@/components/ui/icons";
 
 /* ── Types for widget data ─────────────────────────────────── */
 

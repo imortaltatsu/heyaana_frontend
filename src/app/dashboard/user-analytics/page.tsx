@@ -42,7 +42,7 @@ import {
   Filter,
   Download,
   PieChart as PieChartIcon,
-} from "lucide-react";
+} from "@/components/ui/icons";
 
 // ─── Helpers ─────────────────────────────────────────────
 

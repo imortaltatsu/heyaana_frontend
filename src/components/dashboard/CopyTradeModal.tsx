@@ -3,7 +3,7 @@
 import useSWR from "swr";
 import { useState } from "react";
 import { proxyFetcher } from "@/lib/api";
-import { X, Copy, CheckSquare, Shield, Triangle, Loader2 } from "lucide-react";
+import { X, Copy, CheckSquare, Shield, Triangle, Loader2 } from "@/components/ui/icons";
 
 type CopyMode = "match_portfolio" | "fixed_trade" | "training_wheels";
 

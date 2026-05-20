@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { fetcher, DashboardResponse } from "@/lib/api";
 import { mockDashboardSummary } from "@/lib/mock-data";
-import { Activity, Clock3, Loader2, Users, Zap, ExternalLink, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Activity, Clock3, Loader2, Users, Zap, ExternalLink, ArrowUpRight, ArrowDownRight } from "@/components/ui/icons";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);

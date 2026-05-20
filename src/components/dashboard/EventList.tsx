@@ -26,7 +26,7 @@ import {
     ArrowUp,
     ArrowDown,
     Clock,
-} from "lucide-react";
+} from "@/components/ui/icons";
 
 const TRENDING_URL =
     "/api/gamma/?active=true&closed=false&limit=100&order=volume&ascending=false";

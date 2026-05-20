@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Market, postTrade } from "@/lib/api";
-import { Loader2, ExternalLink, TrendingUp } from "lucide-react";
+import { Loader2, ExternalLink, TrendingUp } from "@/components/ui/icons";
 import { useAuth } from "@/lib/useAuth";
 import { useToast } from "@/components/dashboard/Toast";
 

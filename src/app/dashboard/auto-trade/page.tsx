@@ -2,7 +2,7 @@
 
 import { DashboardChrome } from "@/components/dashboard/DashboardChrome";
 import { AutoTrading } from "@/components/dashboard/AutoTrading";
-import { Zap } from "lucide-react";
+import { Zap } from "@/components/ui/icons";
 
 export default function AutoTradePage() {
   return (

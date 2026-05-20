@@ -2,7 +2,7 @@
 
 import { DashboardChrome } from "@/components/dashboard/DashboardChrome";
 import { EventList } from "@/components/dashboard/EventList";
-import { BarChart3 } from "lucide-react";
+import { BarChart3 } from "@/components/ui/icons";
 
 export default function MarketsPage() {
   return (

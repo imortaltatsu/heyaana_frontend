@@ -13,7 +13,7 @@ import {
     TrendingUp,
     Droplets,
     Lock,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import type { DFlowEvent, EventsResponse } from "@/types/dflow";
 
 // ── Helpers ─────────────────────────────────────────────────

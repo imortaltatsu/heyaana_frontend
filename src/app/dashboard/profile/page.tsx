@@ -7,7 +7,7 @@ import { UserBadge } from "@/components/dashboard/WalletConnect";
 import { useAuth } from "@/lib/useAuth";
 import { proxyFetcher, Portfolio, Position, closePosition, exportPrivateKey, unfollowTrader, followTrader, mergeFollowingWithCache, fetchOrders, cancelOrder, type LimitOrder, type CopyNotification } from "@/lib/api";
 import Link from "next/link";
-import { TrendingUp, TrendingDown, Wallet, BarChart3, Loader2, X, AlertCircle, CheckCircle2, ExternalLink, KeyRound, ShieldAlert, Copy, Eye, EyeOff, Users, UserMinus, ArrowDownToLine, Clock, Pencil } from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, BarChart3, Loader2, X, AlertCircle, CheckCircle2, ExternalLink, KeyRound, ShieldAlert, Copy, Eye, EyeOff, Users, UserMinus, ArrowDownToLine, Clock, Pencil } from "@/components/ui/icons";
 import { DepositModal } from "@/components/dashboard/DepositModal";
 import { PnlShareButton } from "@/components/dashboard/PnlShareButton";
 import { CopyTradeModal } from "@/components/dashboard/CopyTradeModal";

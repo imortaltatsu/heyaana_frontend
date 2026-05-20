@@ -2,7 +2,7 @@
 
 import useSWR from "swr";
 import { memo } from "react";
-import { Zap, BarChart2, Layers, FileText, ArrowLeftRight } from "lucide-react";
+import { Zap, BarChart2, Layers, FileText, ArrowLeftRight } from "@/components/ui/icons";
 import { fetcher, proxyFetcher, type MetaStatsResponse, type Trade } from "@/lib/api";
 import { useAuth } from "@/lib/useAuth";
 

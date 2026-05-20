@@ -15,7 +15,7 @@ import {
   ArrowUpFromLine,
   ArrowRightLeft,
   Command,
-} from "lucide-react";
+} from "@/components/ui/icons";
 
 // ── Types ───────────────────────────────────────────────────────
 

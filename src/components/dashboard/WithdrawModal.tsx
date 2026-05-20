@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { X, AlertTriangle, Loader2, CheckCircle2, AlertCircle, ArrowUpFromLine } from "lucide-react";
+import { X, AlertTriangle, Loader2, CheckCircle2, AlertCircle, ArrowUpFromLine } from "@/components/ui/icons";
 import { withdrawFunds } from "@/lib/api";
 
 interface WithdrawModalProps {

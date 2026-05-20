@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { Market, GammaCategory, gammaFetcher, fetchGammaCategories, buildGammaUrl } from "@/lib/api";
-import { Search, Loader2, Flame, RefreshCw, AlertCircle } from "lucide-react";
+import { Search, Loader2, Flame, RefreshCw, AlertCircle } from "@/components/ui/icons";
 
 interface MarketSearchProps {
     onSelectMarket?: (ticker: string) => void;

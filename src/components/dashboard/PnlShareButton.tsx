@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Share2, Check, Link2, X, Download, Images } from "lucide-react";
+import { Share2, Check, Link2, X, Download, Images } from "@/components/ui/icons";
 import type { Position } from "@/lib/api";
 import {
   buildPnlShareImageUrl,

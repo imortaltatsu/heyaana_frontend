@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { DashboardChrome } from "@/components/dashboard/DashboardChrome";
 import { useAuth } from "@/lib/useAuth";
 import { api2Fetch } from "@/lib/auth-api";
-import { Gift, Trophy, Star, Users, Copy, Share2, Lock, Loader2, CheckCircle2, AlertCircle, Plus } from "lucide-react";
+import { Gift, Trophy, Star, Users, Copy, Share2, Lock, Loader2, CheckCircle2, AlertCircle, Plus } from "@/components/ui/icons";
 
 const authFetcher = (path: string) =>
   api2Fetch(path).then((r) => {

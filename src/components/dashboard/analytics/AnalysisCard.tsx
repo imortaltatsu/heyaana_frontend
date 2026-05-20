@@ -17,7 +17,7 @@ import {
     AreaChart,
     Area
 } from "recharts";
-import { Loader2 } from "lucide-react";
+import { Loader2 } from "@/components/ui/icons";
 
 interface AnalysisCardProps {
     endpointName: string;

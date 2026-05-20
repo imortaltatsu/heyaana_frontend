@@ -3,7 +3,7 @@
 import { useMemo, memo } from "react";
 import useSWR from "swr";
 import { fetcher, MetaStatsResponse, refreshCache } from "@/lib/api";
-import { Loader2, RefreshCw, TrendingUp, TrendingDown } from "lucide-react";
+import { Loader2, RefreshCw, TrendingUp, TrendingDown } from "@/components/ui/icons";
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";

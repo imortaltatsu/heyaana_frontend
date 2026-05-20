@@ -3,7 +3,7 @@
 import useSWR from "swr";
 import { fetcher, Market, normalizeMarket, Trade } from "@/lib/api";
 import { parseMarketTitle } from "@/lib/market-title";
-import { Loader2, X, Clock, Volume2, BarChart3, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Loader2, X, Clock, Volume2, BarChart3, ArrowUpRight, ArrowDownRight } from "@/components/ui/icons";
 
 interface MarketDetailProps {
     ticker: string;

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Clock, ExternalLink, Lock } from "lucide-react";
+import { Clock, ExternalLink, Lock } from "@/components/ui/icons";
 import type { DFlowEvent, DFlowMarket } from "@/types/dflow";
 
 function formatVolume(v: number | undefined): string {

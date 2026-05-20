@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { X, AlertTriangle, Loader2, CheckCircle2, AlertCircle, ArrowRightLeft } from "lucide-react";
+import { X, AlertTriangle, Loader2, CheckCircle2, AlertCircle, ArrowRightLeft } from "@/components/ui/icons";
 import { transferToSafe } from "@/lib/api";
 
 interface TransferToSafeModalProps {

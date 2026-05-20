@@ -2,7 +2,7 @@
 
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
-import { LayoutGrid, List, Bookmark } from "lucide-react";
+import { LayoutGrid, List, Bookmark } from "@/components/ui/icons";
 import { fetchGammaCategories, type GammaCategory } from "@/lib/api";
 
 export type ViewMode = "events" | "markets";
