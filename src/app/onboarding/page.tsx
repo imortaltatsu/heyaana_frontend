@@ -6,21 +6,20 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, ArrowLeft, Send, Sparkles, Wand2, Shield, Zap, Globe, Lock, Coins, TrendingUp, Users, Info, HelpCircle, Mail, MessageSquare, Twitter, Github, Globe2, Wallet, LogIn, ChevronDown, Check, Copy, LogOut, MessageCircle, ArrowRight, Bot, Flame, Loader2, Ticket, UserPlus, UserMinus } from "lucide-react";
+import { ChevronRight, ArrowLeft, Send, Sparkles, Wand2, Shield, Zap, Globe, Lock, Coins, TrendingUp, Users, Info, HelpCircle, Mail, MessageSquare, Twitter, Github, Globe2, Wallet, LogIn, ChevronDown, Check, Copy, LogOut, MessageCircle, ArrowRight, Bot, Flame, Loader2, UserPlus, UserMinus } from "lucide-react";
 import { fetchGlobalLeaderboard, followTrader, unfollowTrader, type GlobalLeaderboardEntry } from "@/lib/api";
 import { useTelegramWidget } from "@/lib/useTelegramWidget";
-import { TOKEN_STORAGE_KEY, checkOnboardStatus, onboardMe } from "@/lib/auth-api";
+import { TOKEN_STORAGE_KEY } from "@/lib/auth-api";
 import { useAuth } from "@/lib/useAuth";
 import { env } from "@/lib/env";
 import { ElsaLogo } from "@/components/landing-v2/elsa-logo";
 
 const STEPS = [
   { id: 0, title: "Connect", subtitle: "Link your account" },
-  { id: 1, title: "Invite", subtitle: "Enter access code" },
-  { id: 2, title: "Markets", subtitle: "Choose preferences" },
-  { id: 3, title: "Risk", subtitle: "Set tolerance" },
-  { id: 4, title: "Traders", subtitle: "Pick to copy" },
-  { id: 5, title: "Launch", subtitle: "Start trading" },
+  { id: 1, title: "Markets", subtitle: "Choose preferences" },
+  { id: 2, title: "Risk", subtitle: "Set tolerance" },
+  { id: 3, title: "Traders", subtitle: "Pick to copy" },
+  { id: 4, title: "Launch", subtitle: "Start trading" },
 ];
 
 const ONBOARDING_COMPLETE_MAP_KEY = "heyanna_onboarding_complete_users";
@@ -75,10 +74,6 @@ function OnboardingPageContent() {
   const [selectedTraders, setSelectedTraders] = useState<number[]>([]);
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
-  const [inviteError, setInviteError] = useState<string | null>(null);
-  const [inviteLoading, setInviteLoading] = useState(false);
-  // null = not yet checked, true = onboarded, false = needs invite code
-  const [onboardStatus, setOnboardStatus] = useState<boolean | null>(null);
   const [traders, setTraders] = useState<GlobalLeaderboardEntry[]>([]);
   const [tradersLoading, setTradersLoading] = useState(false);
   const [tradersError, setTradersError] = useState<string | null>(null);
@@ -96,7 +91,7 @@ function OnboardingPageContent() {
   const TELEGRAM_BOT_USERNAME = env.TELEGRAM_BOT_USERNAME;
   const userOnboardingKey = getUserOnboardingKey(user);
 
-  const next = () => setStep((s) => Math.min(s + 1, 5));
+  const next = () => setStep((s) => Math.min(s + 1, 4));
   const prev = () => setStep((s) => Math.max(s - 1, 0));
 
   const handleContinue = useCallback(() => {
@@ -107,31 +102,11 @@ function OnboardingPageContent() {
         return;
       }
     }
-    if (step === 1) {
-      setInviteError("Please enter an invite code first");
-      return;
-    }
     next();
   }, [step, isAuthenticated]);
 
-  /**
-   * After a successful login, check the backend onboard status and advance
-   * past the invite step when the user is already onboarded.
-   */
   const handlePostLogin = useCallback(async () => {
-    try {
-      const onboarded = await checkOnboardStatus();
-      setOnboardStatus(onboarded);
-      if (onboarded) {
-        setStep((prev) => (prev < 2 ? 2 : prev));
-      } else {
-        setStep(1);
-      }
-    } catch {
-      // If the status check fails, fall through to the invite step
-      setOnboardStatus(false);
-      setStep(1);
-    }
+    setStep((prev) => (prev < 1 ? 1 : prev));
   }, []);
 
   // Returning users who already finished onboarding should go straight to dashboard.
@@ -164,7 +139,7 @@ function OnboardingPageContent() {
         }
         if (typeof draft.maxExposure === "number") setMaxExposure(Math.min(75, Math.max(5, draft.maxExposure)));
         if (Array.isArray(draft.selectedTraders)) setSelectedTraders(draft.selectedTraders);
-        if (typeof draft.step === "number") setStep(Math.min(5, Math.max(2, draft.step)));
+        if (typeof draft.step === "number") setStep(Math.min(4, Math.max(1, draft.step)));
       }
     } catch {
       // Ignore malformed draft payloads.
@@ -175,7 +150,7 @@ function OnboardingPageContent() {
 
   // Persist draft while onboarding is in progress.
   useEffect(() => {
-    if (!bootstrapped || !isAuthenticated || !userOnboardingKey || step >= 5) return;
+    if (!bootstrapped || !isAuthenticated || !userOnboardingKey || step >= 4) return;
     if (typeof window === "undefined") return;
 
     const draft: OnboardingDraft = {
@@ -191,9 +166,9 @@ function OnboardingPageContent() {
 
   const showVerifyingGate = hasSessionToken && isLoading && !isAuthenticated;
 
-  // Fetch top traders when user reaches step 4
+  // Fetch top traders when user reaches the Traders step
   useEffect(() => {
-    if (step !== 4 || traders.length > 0) return;
+    if (step !== 3 || traders.length > 0) return;
     setTradersLoading(true);
     setTradersError(null);
     fetchGlobalLeaderboard({ limit: 10 })
@@ -457,7 +432,7 @@ function OnboardingPageContent() {
               </span>
             </Link>
             <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#6A6A7A]">
-              Step {step + 1} / 6
+              Step {step + 1} / 5
             </span>
           </div>
 
@@ -602,92 +577,13 @@ function OnboardingPageContent() {
               </div>
             )}
 
-            {/* Step 1: Invite Code */}
+            {/* Step 1: Market Preferences */}
             {step === 1 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
                   <div className="flex items-center justify-center gap-3 mb-5">
                     <div className="h-px w-[18px] bg-[#466EFF]" />
-                    <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#466EFF]">Step 02 · Invite</span>
-                    <div className="h-px w-[18px] bg-[#466EFF]" />
-                  </div>
-                  <h2 className="font-display font-black text-[clamp(36px,6vw,64px)] leading-[0.95] tracking-[-0.04em] mb-3">
-                    Enter <span className="text-[#C6FF3A]">invite code</span>.
-                  </h2>
-                  <p className="font-display text-[15px] leading-[1.5] text-[#A8A8B8]">You need an invite code to access HeyAnna.</p>
-                </div>
-
-                <div className="space-y-4 max-w-md mx-auto">
-                  <div className="w-full p-5 bg-[#0E0E1A] border border-[#1A1A26] scanline relative">
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="w-12 h-12 bg-[#C6FF3A]/10 border border-[#C6FF3A]/30 flex items-center justify-center">
-                        <Ticket className="w-6 h-6 text-[#C6FF3A]" strokeWidth={2.5} />
-                      </div>
-                      <div className="text-left">
-                        <div className="font-display font-bold text-[15px]">Invite Code</div>
-                        <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#6A6A7A] mt-0.5">Unique access code</div>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        id="invite-code-input"
-                        placeholder="E.G. ABC12345"
-                        className="flex-1 px-3 py-2 text-sm font-mono bg-[#070710] border border-[#1A1A26] focus:border-[#466EFF] outline-none text-[#EDEDF2] tracking-[0.08em] uppercase"
-                        maxLength={16}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            (document.getElementById("invite-code-submit") as HTMLButtonElement)?.click();
-                          }
-                        }}
-                      />
-                      <button
-                        id="invite-code-submit"
-                        onClick={async () => {
-                          const input = document.getElementById("invite-code-input") as HTMLInputElement;
-                          const code = input?.value?.trim().toUpperCase();
-                          if (!code) {
-                            setInviteError("Please enter an invite code");
-                            return;
-                          }
-                          setInviteLoading(true);
-                          setInviteError(null);
-                          try {
-                            await onboardMe(code);
-                            setOnboardStatus(true);
-                            next();
-                          } catch (err) {
-                            setInviteError(err instanceof Error ? err.message : "Invalid invite code");
-                          } finally {
-                            setInviteLoading(false);
-                          }
-                        }}
-                        disabled={inviteLoading}
-                        className="flex items-center gap-1.5 px-5 py-2 bg-[#C6FF3A] text-[#070710] font-display font-extrabold text-[13px] hover:bg-[#070710] hover:text-[#C6FF3A] border-2 border-[#C6FF3A] transition-colors scanline disabled:opacity-50"
-                      >
-                        {inviteLoading ? (
-                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        ) : (
-                          <ArrowRight className="w-3.5 h-3.5" strokeWidth={3} />
-                        )}
-                        Continue
-                      </button>
-                    </div>
-                    {inviteError && (
-                      <p className="mt-3 text-[11px] uppercase tracking-[0.14em] text-[#FF3D7F] font-mono">{inviteError}</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Step 2: Market Preferences */}
-            {step === 2 && (
-              <div className="space-y-6">
-                <div className="text-center mb-10">
-                  <div className="flex items-center justify-center gap-3 mb-5">
-                    <div className="h-px w-[18px] bg-[#466EFF]" />
-                    <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#466EFF]">Step 03 · Markets</span>
+                    <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#466EFF]">Step 02 · Markets</span>
                     <div className="h-px w-[18px] bg-[#466EFF]" />
                   </div>
                   <h2 className="font-display font-black text-[clamp(36px,6vw,64px)] leading-[0.95] tracking-[-0.04em] mb-3">
@@ -699,13 +595,13 @@ function OnboardingPageContent() {
               </div>
             )}
 
-            {/* Step 3: Risk Tolerance */}
-            {step === 3 && (
+            {/* Step 2: Risk Tolerance */}
+            {step === 2 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
                   <div className="flex items-center justify-center gap-3 mb-5">
                     <div className="h-px w-[18px] bg-[#466EFF]" />
-                    <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#466EFF]">Step 04 · Risk</span>
+                    <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#466EFF]">Step 03 · Risk</span>
                     <div className="h-px w-[18px] bg-[#466EFF]" />
                   </div>
                   <h2 className="font-display font-black text-[clamp(36px,6vw,64px)] leading-[0.95] tracking-[-0.04em] mb-3">
@@ -791,13 +687,13 @@ function OnboardingPageContent() {
               </div>
             )}
 
-            {/* Step 4: Select Traders */}
-            {step === 4 && (
+            {/* Step 3: Select Traders */}
+            {step === 3 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
                   <div className="flex items-center justify-center gap-3 mb-5">
                     <div className="h-px w-[18px] bg-[#466EFF]" />
-                    <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#466EFF]">Step 05 · Copy Desk</span>
+                    <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#466EFF]">Step 04 · Copy Desk</span>
                     <div className="h-px w-[18px] bg-[#466EFF]" />
                   </div>
                   <h2 className="font-display font-black text-[clamp(36px,6vw,64px)] leading-[0.95] tracking-[-0.04em] mb-3">
@@ -904,8 +800,8 @@ function OnboardingPageContent() {
               </div>
             )}
 
-            {/* Step 5: Launch */}
-            {step === 5 && (
+            {/* Step 4: Launch */}
+            {step === 4 && (
               <div className="space-y-8 text-center">
                 <div className="mb-8">
                   <div className="w-20 h-20 bg-[#C6FF3A] flex items-center justify-center mx-auto mb-6 scanline" style={{ imageRendering: "pixelated", boxShadow: "0 0 40px rgba(198,255,58,0.25)" }}>
@@ -913,7 +809,7 @@ function OnboardingPageContent() {
                   </div>
                   <div className="flex items-center justify-center gap-3 mb-5">
                     <div className="h-px w-[18px] bg-[#C6FF3A]" />
-                    <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#C6FF3A]">Step 06 · Launch</span>
+                    <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#C6FF3A]">Step 05 · Launch</span>
                     <div className="h-px w-[18px] bg-[#C6FF3A]" />
                   </div>
                   <h2 className="font-display font-black text-[clamp(40px,7vw,72px)] leading-[0.95] tracking-[-0.04em] mb-3">
@@ -971,7 +867,7 @@ function OnboardingPageContent() {
         </AnimatePresence>
 
         {/* Navigation Buttons */}
-        {step < 5 && (
+        {step < 4 && (
           <div className="flex items-center justify-between mt-14 pt-6 border-t border-[#1A1A26]">
             <button
               onClick={prev}
