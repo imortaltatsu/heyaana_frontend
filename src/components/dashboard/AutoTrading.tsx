@@ -344,6 +344,14 @@ export function AutoTrading() {
         ))}
       </div>
 
+      {/* ── Fee Notice ── */}
+      <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-blue-500/20 bg-blue-500/5">
+        <AlertCircle className="w-4 h-4 text-blue-400 shrink-0" />
+        <p className="text-xs text-blue-400/80 leading-relaxed">
+          A <span className="font-semibold text-blue-300">3% fee</span> is charged on every auto trade execution.
+        </p>
+      </div>
+
       {/* ── Claim Disclaimer ── */}
       <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-amber-500/20 bg-amber-500/5">
         <Gift className="w-4 h-4 text-amber-400 shrink-0" />
