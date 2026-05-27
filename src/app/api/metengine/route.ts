@@ -198,11 +198,6 @@ export async function POST(request: NextRequest) {
       polyfill: false,
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (mppx as any).onPaymentFailed?.((event: any) => {
-      console.error("[metengine] mpp payment failed:", JSON.stringify(event, null, 2));
-    });
-
     const paid = await mppx.fetch(url, fetchOpts);
 
     if (!paid.ok) {
