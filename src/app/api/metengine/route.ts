@@ -266,9 +266,18 @@ export async function POST(request: NextRequest) {
 
     // Step 4: Sign and pay
     console.log("[metengine] x402 price:", price, "USD for", endpoint);
-    const paymentPayload = await httpClient.createPaymentPayload(
-      paymentRequired as Parameters<typeof httpClient.createPaymentPayload>[0],
-    );
+    let paymentPayload;
+    try {
+      paymentPayload = await httpClient.createPaymentPayload(
+        paymentRequired as Parameters<typeof httpClient.createPaymentPayload>[0],
+      );
+    } catch (signErr) {
+      console.error("[metengine] x402 signing failed:", signErr);
+      return NextResponse.json(
+        { error: "Payment signing failed", detail: signErr instanceof Error ? signErr.message : String(signErr) },
+        { status: 502 },
+      );
+    }
     const paymentHeaders = httpClient.encodePaymentSignatureHeader(paymentPayload);
 
     const paid = await fetch(url, {
@@ -281,7 +290,7 @@ export async function POST(request: NextRequest) {
 
     if (!paid.ok) {
       const errBody = await paid.json().catch(() => ({}));
-      console.error("[metengine] x402 payment failed:", paid.status, JSON.stringify(errBody));
+      console.error("[metengine] x402 payment rejected:", paid.status, JSON.stringify(errBody));
       return NextResponse.json(
         { error: (errBody as Record<string, string>).error ?? `Payment failed (${paid.status})` },
         { status: paid.status },
@@ -312,6 +321,7 @@ export async function POST(request: NextRequest) {
       settlement_tx: settlementTx,
     });
   } catch (err) {
+    console.error("[metengine] unhandled error:", err);
     const message = err instanceof Error ? err.message : "Internal server error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
