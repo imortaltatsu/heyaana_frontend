@@ -174,14 +174,21 @@ export async function POST(request: NextRequest) {
     const initialBody = await initial.json();
 
     const { x402Client, x402HTTPClient } = await import("@x402/core/client");
-    const { registerExactSvmScheme } = await import("@x402/svm/exact/client");
+    const { ExactSvmScheme, registerExactSvmScheme } = await import("@x402/svm/exact/client");
     const { toClientSvmSigner } = await import("@x402/svm");
     const { getBase58Encoder, createKeyPairSignerFromBytes } = await import("@solana/kit");
 
     const bytes = getBase58Encoder().encode(privateKey);
     const signer = await createKeyPairSignerFromBytes(bytes);
+    const svmSigner = toClientSvmSigner(signer);
     const client = new x402Client();
-    registerExactSvmScheme(client, { signer: toClientSvmSigner(signer) });
+    const rpcUrl = process.env.SOLANA_RPC_URL;
+    if (rpcUrl) {
+      const scheme = new ExactSvmScheme(svmSigner, { rpcUrl });
+      client.register("solana:*", scheme);
+    } else {
+      registerExactSvmScheme(client, { signer: svmSigner });
+    }
     const httpClient = new x402HTTPClient(client);
 
     let paymentRequired: Record<string, unknown>;
