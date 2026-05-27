@@ -32,6 +32,31 @@ interface ProxyBody {
   params?: Record<string, unknown>;
 }
 
+interface WwwAuthChallenge {
+  id: string;
+  method: string;
+  request: string;
+  opaque: string;
+  description: string;
+  expires: string;
+}
+
+function parseWwwAuthenticateSolana(header: string): WwwAuthChallenge | null {
+  const challenges = header.split(/,\s*(?=Payment\s)/);
+  for (const challenge of challenges) {
+    const methodMatch = challenge.match(/method="([^"]+)"/);
+    if (methodMatch?.[1] !== "solana") continue;
+    const id = challenge.match(/id="([^"]+)"/)?.[1] ?? "";
+    const request = challenge.match(/request="([^"]+)"/)?.[1] ?? "";
+    const opaque = challenge.match(/opaque="([^"]+)"/)?.[1] ?? "";
+    const description = challenge.match(/description="([^"]+)"/)?.[1] ?? "";
+    const expires = challenge.match(/expires="([^"]+)"/)?.[1] ?? "";
+    if (!request) return null;
+    return { id, method: "solana", request, opaque, description, expires };
+  }
+  return null;
+}
+
 /** Validate auth and return user_id */
 async function getUserId(request: NextRequest): Promise<string | null> {
   const authHeader = request.headers.get("authorization");
@@ -136,7 +161,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Step 2: Parse payment requirements
+    // Step 2: Parse payment requirements from WWW-Authenticate header
     const privateKey = process.env.METENGINE_SOLANA_PRIVATE_KEY;
     if (!privateKey) {
       return NextResponse.json(
@@ -145,6 +170,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const wwwAuth = initial.headers.get("www-authenticate");
     const initialBody = await initial.json();
 
     const { x402Client, x402HTTPClient } = await import("@x402/core/client");
@@ -158,17 +184,63 @@ export async function POST(request: NextRequest) {
     registerExactSvmScheme(client, { signer: toClientSvmSigner(signer) });
     const httpClient = new x402HTTPClient(client);
 
-    const paymentRequired = httpClient.getPaymentRequiredResponse(
-      (name: string) => initial.headers.get(name),
-      initialBody,
-    );
+    let paymentRequired: Record<string, unknown>;
 
-    if (!paymentRequired.accepts?.length) {
+    // Try standard x402 PAYMENT-REQUIRED header first, fall back to WWW-Authenticate
+    try {
+      paymentRequired = httpClient.getPaymentRequiredResponse(
+        (name: string) => initial.headers.get(name),
+        initialBody,
+      );
+    } catch {
+      if (!wwwAuth) {
+        return NextResponse.json({ error: "No payment information in 402 response." }, { status: 502 });
+      }
+
+      const challenge = parseWwwAuthenticateSolana(wwwAuth);
+      if (!challenge) {
+        return NextResponse.json({ error: "No Solana payment option available." }, { status: 502 });
+      }
+
+      const requestData = JSON.parse(
+        Buffer.from(challenge.request, "base64").toString("utf-8"),
+      ) as {
+        amount: string;
+        currency: string;
+        recipient: string;
+        methodDetails?: { decimals?: number; network?: string; tokenProgram?: string };
+      };
+
+      paymentRequired = {
+        x402Version: 2,
+        resource: { url, method },
+        accepts: [
+          {
+            scheme: "exact",
+            network: `solana:${requestData.methodDetails?.network ?? "mainnet-beta"}`,
+            asset: requestData.currency,
+            amount: requestData.amount,
+            payTo: requestData.recipient,
+            maxTimeoutSeconds: 120,
+            extra: {
+              tokenProgram: requestData.methodDetails?.tokenProgram,
+              description: challenge.description,
+              challengeId: challenge.id,
+              opaque: challenge.opaque,
+            },
+          },
+        ],
+        extensions: {},
+      };
+    }
+
+    const accepts = (paymentRequired as { accepts?: { amount: string }[] }).accepts;
+    if (!accepts?.length) {
       return NextResponse.json({ error: "No payment options available." }, { status: 502 });
     }
 
-    // x402 amount is in USDC base units (6 decimals), convert to dollars
-    const rawAmount = Number(paymentRequired.accepts[0]!.amount);
+    // Amount is in USDC base units (6 decimals), convert to dollars
+    const rawAmount = Number(accepts[0]!.amount);
     const price = rawAmount >= 1000 ? rawAmount / 1_000_000 : rawAmount;
 
     // Step 3: Check user credits BEFORE paying
@@ -182,7 +254,9 @@ export async function POST(request: NextRequest) {
 
     // Step 4: Sign and pay
     console.log("[metengine] x402 price:", price, "USD for", endpoint);
-    const paymentPayload = await httpClient.createPaymentPayload(paymentRequired);
+    const paymentPayload = await httpClient.createPaymentPayload(
+      paymentRequired as Parameters<typeof httpClient.createPaymentPayload>[0],
+    );
     const paymentHeaders = httpClient.encodePaymentSignatureHeader(paymentPayload);
 
     const paid = await fetch(url, {
