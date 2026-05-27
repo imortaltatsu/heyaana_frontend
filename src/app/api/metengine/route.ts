@@ -228,6 +228,7 @@ export async function POST(request: NextRequest) {
             maxTimeoutSeconds: 120,
             extra: {
               tokenProgram: requestData.methodDetails?.tokenProgram,
+              feePayer: signer.address,
               description: challenge.description,
               challengeId: challenge.id,
               opaque: challenge.opaque,
