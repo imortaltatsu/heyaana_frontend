@@ -218,10 +218,10 @@ export async function POST(request: NextRequest) {
           {
             scheme: "exact",
             network: requestData.methodDetails?.network === "devnet"
-              ? "solana-devnet"
+              ? "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1"
               : requestData.methodDetails?.network === "testnet"
-                ? "solana-testnet"
-                : "solana",
+                ? "solana:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z"
+                : "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
             asset: requestData.currency,
             amount: requestData.amount,
             payTo: requestData.recipient,
