@@ -217,7 +217,11 @@ export async function POST(request: NextRequest) {
         accepts: [
           {
             scheme: "exact",
-            network: `solana:${requestData.methodDetails?.network ?? "mainnet-beta"}`,
+            network: requestData.methodDetails?.network === "devnet"
+              ? "solana-devnet"
+              : requestData.methodDetails?.network === "testnet"
+                ? "solana-testnet"
+                : "solana",
             asset: requestData.currency,
             amount: requestData.amount,
             payTo: requestData.recipient,
